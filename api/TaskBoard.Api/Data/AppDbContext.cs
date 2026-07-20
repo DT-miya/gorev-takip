@@ -44,7 +44,14 @@ public class AppDbContext : DbContext
             .WithMany(p => p.Members)
             .HasForeignKey(pm => pm.ProjectId)
             .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(pm => pm.User)
+                .WithMany(u => u.Memberships)
+                .HasForeignKey(pm => pm.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
+
+       
 
         modelBuilder.Entity<BoardColumn>(e =>
         {

@@ -2,12 +2,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TaskBoard.Api.Middleware;
 using System.Text;
 using TaskBoard.Api.Data;
 using TaskBoard.Api.Interfaces;
 using TaskBoard.Api.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+
+
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -73,6 +80,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularPolicy", policy =>
@@ -84,6 +94,16 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    db.Database.Migrate();   // Migration'larý uygular
+
+    DbSeeder.Seed(db);       // Seed verilerini ekler
+}
 
 if (app.Environment.IsDevelopment())
 {
