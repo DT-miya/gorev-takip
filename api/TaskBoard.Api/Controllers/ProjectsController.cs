@@ -1,0 +1,52 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using TaskBoard.Api.DTOs.Project;
+using System.Security.Claims;
+using TaskBoard.Api.Interfaces;
+
+namespace TaskBoard.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+
+public class ProjectsController : ControllerBase
+{
+    private readonly IProjectService _projectService;
+
+    public ProjectsController(IProjectService projectService)
+    {
+        _projectService = projectService;
+    }
+
+
+private int GetUserId()
+    {
+        return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+    }
+
+[HttpGet]
+public async Task<IActionResult> GetMyProjects()
+    {
+        var userId = GetUserId();
+        var projects = await _projectService.GetProjectResponsesAsync(userId);
+        return Ok(projects);
+    }
+
+[HttpGet("{id}")]
+public async Task<IActionResult> GetById(int id)
+    {
+        var userId = GetUserId();
+        var project = await _projectService.GetByIdAsync(id, userId);
+        return Ok(project);
+    }
+
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, UpdateProjectRequest request)
+{
+    var userId = GetUserId();
+    var project = await _projectService.UpdateAsync(request, id, userId);
+    return Ok(project);
+}
+
+}
