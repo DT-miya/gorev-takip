@@ -31,6 +31,21 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.LoginAsync(request);
 
+        if (!result.Success || string.IsNullOrEmpty(result.Token))
+        {
+            return BadRequest(result);
+        }
+
         return Ok(result);
     }
+
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        // Çýkýþ yapýldýðýnda Cookie'yi siliyoruz
+        Response.Cookies.Delete("jwt");
+        return Ok(new { success = true, message = "Çýkýþ yapýldý." });
+    }
+
 }

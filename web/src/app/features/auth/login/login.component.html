@@ -1,0 +1,43 @@
+<div class="auth-card">
+  <h2>Giriş Yap</h2>
+  <p class="subtitle">Görev Takip Sistemine Hoş Geldiniz</p>
+
+  <div *ngIf="errorMessage" class="error-alert">
+    {{ errorMessage }}
+  </div>
+
+  <form (ngSubmit)="onLogin()">
+    <div class="form-group">
+      <label for="email">E-posta</label>
+      <input 
+        type="email" 
+        id="email" 
+        [(ngModel)]="model.email" 
+        name="email" 
+        placeholder="ornek@email.com" 
+        required 
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Şifre</label>
+      <input 
+        type="password" 
+        id="password" 
+        [(ngModel)]="model.password" 
+        name="password" 
+        placeholder="••••••••" 
+        required 
+      />
+    </div>
+
+    <button type="submit" [disabled]="isLoading">
+      {{ isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap' }}
+    </button>
+  </form>
+
+  <div class="auth-footer">
+    <span>Hesabınız yok mu?</span>
+    <a routerLink="/register">Kayıt Ol</a>
+  </div>
+</div>
