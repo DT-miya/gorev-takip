@@ -48,5 +48,19 @@ public async Task<IActionResult> Update(int id, UpdateProjectRequest request)
     var project = await _projectService.UpdateAsync(request, id, userId);
     return Ok(project);
 }
+[HttpPost]
+public async Task<IActionResult> Create(CreateProjectRequest request)
+{
+    var userId = GetUserId();
+    var project = await _projectService.CreateAsync(request, userId);
+    return Ok(project);
+}
+[HttpDelete("{id}")]
+public async Task<IActionResult> Delete(int id)
+{
+    var userId = GetUserId();
+    await _projectService.DeleteAsync(id, userId);
+    return NoContent();
+}
 
 }
