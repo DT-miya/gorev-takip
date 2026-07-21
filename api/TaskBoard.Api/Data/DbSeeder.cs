@@ -16,14 +16,14 @@ public static class DbSeeder
         {
             FullName = "Ali Yýlmaz",
             Email = "ali@test.com",
-            PasswordHash = BCrypt.HashPassword("Test123!")
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!")
         };
 
         var ayse = new User
         {
             FullName = "Ayþe Demir",
             Email = "ayse@test.com",
-            PasswordHash = BCrypt.HashPassword("Test123!")
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!")
         };
 
         context.Users.AddRange(ali, ayse);
