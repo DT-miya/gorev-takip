@@ -1,0 +1,48 @@
+.project-list-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 24px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.project-card h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.project-card p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.project-card small {
+  color: #999;
+  font-size: 12px;
+}
