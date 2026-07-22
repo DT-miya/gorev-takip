@@ -70,11 +70,13 @@ public class ProjectService : IProjectService
         await _context.SaveChangesAsync();
 
         var member = new ProjectMember
+
         {
             ProjectId = project.Id,
             UserId = userId,
             Role = ProjectRoles.Owner
         };
+
         _context.ProjectMembers.Add(member);
         await _context.SaveChangesAsync();
 
@@ -122,4 +124,73 @@ public class ProjectService : IProjectService
         }
         ;
     }
+
+    public async Task<List<MemberDto>> GetMembersAsync(int projectId, int userId)
+    {
+        await EnsureMemberAsync(projectId, userId);
+
+        var members = await _context.ProjectMembers
+        .Where (m => m.ProjectId == projectId)
+        .Select(m => new MemberDto
+        {
+            UserId = m.UserId,
+            FullName = m.User.FullName,
+            Email = m.User.Email,
+            Role = m.Role
+        })
+        .ToListAsync();
+
+        return members;
+    }
+
+    public async Task<List<MemberDto>> AddMemberAsync(int projectId, AddMemberRequest request, int userId)
+    {
+        await EnsureMemberAsync(projectId, userId);
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if ( user == null)
+        {
+            throw new NotFoundException("Bu e-posta ile kullanıcı bulunamadı.");
+        }
+
+        var alreadyMember = await _context.ProjectMembers
+        .AnyAsync(m => m.ProjectId == projectId && m.UserId == user.Id);
+
+        if (alreadyMember)
+        {
+            throw new ConflictException("Bu kullanıcı zaten üye.");
+        }
+
+        var member = new ProjectMember
+        {
+            ProjectId = projectId,
+            UserId = user.Id,
+            Role = ProjectRoles.Member
+        };
+
+        _context.ProjectMembers.Add(member);
+        await _context.SaveChangesAsync();
+
+        return await GetMembersAsync(projectId, userId);
+    }
+
+    public async Task<List<MemberDto>> RemoveMemberAsync(int projectId, int memberUserId, int userId)
+{
+    await EnsureMemberAsync(projectId, userId);
+
+    var member = await _context.ProjectMembers
+        .FirstOrDefaultAsync(m => m.ProjectId == projectId && m.UserId == memberUserId);
+
+    if (member == null)
+        throw new NotFoundException("Üye bulunamadı");
+
+    if (member.Role == ProjectRoles.Owner)
+        throw new ConflictException("Proje sahibi çıkarılamaz");
+
+    _context.ProjectMembers.Remove(member);
+    await _context.SaveChangesAsync();
+
+    return await GetMembersAsync(projectId, userId);
+}
 }

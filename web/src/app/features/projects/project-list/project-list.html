@@ -1,0 +1,28 @@
+<div class="project-list-container">
+  <div class="header">
+    <h1>Projelerim</h1>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      + Yeni Proje
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p>Yükleniyor...</p>
+  } @else if (projects().length === 0) {
+    <p>Henüz projen yok.</p>
+  } @else {
+    <div class="project-grid">
+      @for (project of projects(); track project.id) {
+        <div class="project-card">
+          <h3>{{ project.name }}</h3>
+          <p class="description">{{ project.description }}</p>
+          <small class="meta">Sahibi: {{ project.ownerName }} · {{ project.memberCount }} üye</small>
+          <div class="card-actions">
+            <button mat-button (click)="openMembersDialog(project.id, $event)">Üyeler</button>
+            <button mat-button color="warn" (click)="deleteProject(project.id, $event)">Sil</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

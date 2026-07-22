@@ -7,21 +7,21 @@ public static class DbSeeder
 {
     public static void Seed(AppDbContext context)
     {
-        // Daha �nce seed at�ld�ysa tekrar ekleme
+        // Daha önce seed atıldıysa tekrar ekleme
         if (context.Users.Any())
             return;
 
         //user
         var ali = new User
         {
-            FullName = "Ali Y�lmaz",
+            FullName = "Ali Yılmaz",
             Email = "ali@test.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!")
         };
 
         var ayse = new User
         {
-            FullName = "Ay�e Demir",
+            FullName = "Ayşe Demir",
             Email = "ayse@test.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!")
         };
@@ -33,7 +33,7 @@ public static class DbSeeder
         var project = new Project
         {
             Name = "Staj Projesi",
-            Description = "G�rev takip uygulamas�",
+            Description = "Görev takip uygulaması",
             OwnerId = ali.Id
         };
 
@@ -65,7 +65,7 @@ public static class DbSeeder
         var todo = new BoardColumn
         {
             ProjectId = project.Id,
-            Name = "Yap�lacak",
+            Name = "Yapılacak",
             Order = 1
         };
 
@@ -87,13 +87,13 @@ public static class DbSeeder
         context.SaveChanges();
 
 
-        // g�revler
+        // görevler
         context.Tasks.AddRange(
 
     new TaskItem
     {
         ColumnId = todo.Id,
-        Title = "Login ekran�n� haz�rla",
+        Title = "Login ekranını hazırla",
         AssigneeId = ali.Id,
         Priority = TaskPriorities.High,
         Order = 1
@@ -111,7 +111,7 @@ public static class DbSeeder
     new TaskItem
     {
         ColumnId = doing.Id,
-        Title = "JWT Token olu�tur",
+        Title = "JWT Token oluştur",
         AssigneeId = ali.Id,
         Priority = TaskPriorities.High,
         Order = 1
@@ -129,7 +129,7 @@ public static class DbSeeder
     new TaskItem
     {
         ColumnId = done.Id,
-        Title = "Entity olu�tur",
+        Title = "Entity oluştur",
         AssigneeId = ayse.Id,
         Priority = TaskPriorities.Low,
         Order = 1
@@ -138,7 +138,7 @@ public static class DbSeeder
     new TaskItem
     {
         ColumnId = done.Id,
-        Title = "Proje yap�s� kuruldu",
+        Title = "Proje yapısı kuruldu",
         AssigneeId = ali.Id,
         Priority = TaskPriorities.Low,
         Order = 2

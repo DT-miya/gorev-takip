@@ -1,0 +1,27 @@
+.add-member {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.email-input {
+  flex: 1;
+}
+
+.error-msg {
+  color: #d32f2f;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.member-row small {
+  color: #888;
+}
