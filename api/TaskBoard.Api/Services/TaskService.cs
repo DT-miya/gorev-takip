@@ -108,7 +108,7 @@ namespace TaskBoard.Api.Services
     var columns = await _context.BoardColumns
         .Where(c => c.ProjectId == projectId)
         .OrderBy(c => c.Order)
-        .Include(c => c.Tasks)
+        .Include(c => c.Tasks.OrderBy(t => t.Order))
             .ThenInclude(t => t.Assignee)
         .ToListAsync();
 

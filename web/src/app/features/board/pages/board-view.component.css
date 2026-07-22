@@ -1,0 +1,210 @@
+/* Ana Pano Kapsayıcısı */
+.board-container {
+  padding: 20px;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.board-header {
+  margin-bottom: 20px;
+}
+
+.board-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Kolonların Yan Yana Dizildiği Alan (Horizontal Scroll) */
+.columns-wrapper {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  align-items: flex-start;
+  height: 100%;
+  padding-bottom: 10px;
+}
+
+/* Tek Bir Kolon Kartı */
+.column-card {
+  background: #f4f5f7;
+  border-radius: 8px;
+  width: 280px;
+  min-width: 280px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  cursor: grab;
+}
+.column-header:active {
+  cursor: grabbing;
+}
+
+.column-header h3 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+.task-count {
+  background: #dfe1e6;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #42526e;
+}
+
+/* Görev Kartlarının Listesi (Dikey Scroll) */
+.tasks-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Tek Bir Görev Kartı */
+.task-card {
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e2e8f0;
+}
+
+.task-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #172b4d;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+/* Öncelik Rozetleri (Badges) */
+.badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.badge.high {
+  background: #ffebe6;
+  color: #de350b;
+}
+
+.badge.medium {
+  background: #fffae6;
+  color: #ff8b00;
+}
+
+.badge.low {
+  background: #e3fcef;
+  color: #006644;
+}
+
+.assignee {
+  color: #6b778c;
+  font-weight: 500;
+}
+
+/* Görev Ekleme Alanı */
+.add-task-section {
+  margin-top: 10px;
+}
+
+.btn-add-task {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #5e6c84;
+  font-weight: 500;
+}
+
+.btn-add-task:hover {
+  background: #ebecf0;
+  color: #172b4d;
+}
+
+/* Hızlı Görev Formu */
+.quick-task-form input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #4c9aff;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.btn-save {
+  background: #0052cc;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save:hover {
+  background: #0065ff;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #42526e;
+}
+
+/* Sürükleme esnasında orijinal kartın arkasındaki boşluk efekti */
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+/* Sürükleme yapılırken farenin ucundaki kart stili */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  padding: 10px 12px;
+}
+
+/* Kartların yer değiştirme animasyonu */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
