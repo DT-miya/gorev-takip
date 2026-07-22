@@ -169,4 +169,23 @@ public class ProjectService : IProjectService
 
         return await GetMembersAsync(projectId, userId);
     }
+
+    public async Task<List<MemberDto>> RemoveMemberAsync(int projectId, int memberUserId, int userId)
+{
+    await EnsureMemberAsync(projectId, userId);
+
+    var member = await _context.ProjectMembers
+        .FirstOrDefaultAsync(m => m.ProjectId == projectId && m.UserId == memberUserId);
+
+    if (member == null)
+        throw new NotFoundException("Üye bulunamadı");
+
+    if (member.Role == ProjectRoles.Owner)
+        throw new ConflictException("Proje sahibi çıkarılamaz");
+
+    _context.ProjectMembers.Remove(member);
+    await _context.SaveChangesAsync();
+
+    return await GetMembersAsync(projectId, userId);
+}
 }

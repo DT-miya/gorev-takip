@@ -80,4 +80,11 @@ public async Task<IActionResult> AddMember(int id, AddMemberRequest request)
         return Ok(members);
     }
 
+[HttpDelete("{id}/members/{memberUserId}")]
+public async Task<IActionResult> RemoveMember(int id, int memberUserId)
+{
+    var userId = GetUserId();
+    var members = await _projectService.RemoveMemberAsync(id, memberUserId, userId);
+    return Ok(members);
+}
 }

@@ -20,5 +20,7 @@ public interface IProjectService
 
     Task<List<MemberDto>> AddMemberAsync(int projectId, AddMemberRequest request, int userId);
 
+    Task<List<MemberDto>> RemoveMemberAsync(int projectId, int memberUserId, int userId);
+
 
 }
