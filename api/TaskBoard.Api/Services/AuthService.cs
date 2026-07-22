@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TaskBoard.Api.Data;       // AppDbContext ve Entities burada yer alýyor
+using TaskBoard.Api.Data;       // AppDbContext ve Entities burada yer alï¿½yor
 using TaskBoard.Api.DTOs.Auth;
 using TaskBoard.Api.Interfaces;
 using TaskBoard.Api.Data.Entities;
@@ -27,7 +27,7 @@ public class AuthService : IAuthService
         var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser != null)
         {
-            return new AuthResponse { Success = false, Message = "Bu e-posta adresi zaten kullanýmda." };
+            return new AuthResponse { Success = false, Message = "Bu e-posta adresi zaten kullanï¿½mda." };
         }
 
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -42,7 +42,7 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return new AuthResponse { Success = true, Message = "Kayýt baþarýlý." };
+        return new AuthResponse { Success = true, Message = "KayÄ±t baÅŸarÄ±lÄ±." };
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
@@ -50,13 +50,13 @@ public class AuthService : IAuthService
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user == null)
         {
-            return new AuthResponse { Success = false, Message = "E-posta veya þifre hatalý." };
+            return new AuthResponse { Success = false, Message = "E-posta veya ÅŸifre hatalÄ±." };
         }
 
         bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
         if (!isPasswordValid)
         {
-            return new AuthResponse { Success = false, Message = "E-posta veya þifre hatalý." };
+            return new AuthResponse { Success = false, Message = "E-posta veya ÅŸifre hatalÄ±." };
         }
 
         var token = GenerateJwtToken(user);
@@ -64,7 +64,7 @@ public class AuthService : IAuthService
         return new AuthResponse
         {
             Success = true,
-            Message = "Giriþ baþarýlý.",
+            Message = "GiriÅŸ BaÅŸarÄ±lÄ±",
             Token = token
         };
     }
@@ -85,6 +85,8 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(2),
+            Issuer = jwtSettings["Issuer"],
+            Audience = jwtSettings["Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
