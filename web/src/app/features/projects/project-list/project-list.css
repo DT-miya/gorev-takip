@@ -1,33 +1,42 @@
 .project-list-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 32px 16px;
+  padding: 32px 24px;
 }
 
-h1 {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
   font-size: 28px;
   color: #2c3e50;
-  margin-bottom: 24px;
+  margin: 0;
 }
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .project-card {
   background: #fff;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 20px;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
   transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
 }
 
 .project-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
 }
 
 .project-card h3 {
@@ -36,13 +45,23 @@ h1 {
   font-size: 18px;
 }
 
-.project-card p {
-  margin: 0 0 12px 0;
+.description {
   color: #666;
   font-size: 14px;
+  margin: 0 0 16px 0;
+  flex: 1;
 }
 
-.project-card small {
+.meta {
   color: #999;
   font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
 }

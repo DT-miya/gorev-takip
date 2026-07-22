@@ -63,4 +63,28 @@ public async Task<IActionResult> Delete(int id)
     return NoContent();
 }
 
+[HttpGet("{id}/members")]
+public async Task<IActionResult> GetMembers(int id)
+    {
+        var userId = GetUserId();
+        var members = await _projectService.GetMembersAsync(id, userId);
+        return Ok(members);
+    }
+
+[HttpPost("{id}/members")]
+
+public async Task<IActionResult> AddMember(int id, AddMemberRequest request)
+    {
+        var userId = GetUserId();
+        var members = await _projectService.AddMemberAsync(id, request, userId);
+        return Ok(members);
+    }
+
+[HttpDelete("{id}/members/{memberUserId}")]
+public async Task<IActionResult> RemoveMember(int id, int memberUserId)
+{
+    var userId = GetUserId();
+    var members = await _projectService.RemoveMemberAsync(id, memberUserId, userId);
+    return Ok(members);
+}
 }

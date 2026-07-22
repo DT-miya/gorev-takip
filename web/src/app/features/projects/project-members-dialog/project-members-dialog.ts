@@ -1,0 +1,77 @@
+import { Component, OnInit, signal, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { ProjectService } from '../project.service';
+import { Member } from '../../../core/models/project.model';
+
+@Component({
+  selector: 'app-project-members-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatListModule,
+    MatIconModule
+  ],
+  templateUrl: './project-members-dialog.html',
+  styleUrl: './project-members-dialog.css'
+})
+export class ProjectMembersDialog implements OnInit {
+  members = signal<Member[]>([]);
+  newEmail = '';
+  loading = signal(true);
+  error = signal('');
+
+  constructor(
+    private projectService: ProjectService,
+    @Inject(MAT_DIALOG_DATA) public data: { projectId: number }
+  ) {}
+
+  ngOnInit(): void {
+    this.loadMembers();
+  }
+
+  loadMembers(): void {
+    this.projectService.getMembers(this.data.projectId).subscribe({
+      next: (members) => {
+        this.members.set(members);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false)
+    });
+  }
+
+  addMember(): void {
+    if (!this.newEmail.trim()) return;
+    this.error.set('');
+
+    this.projectService.addMember(this.data.projectId, this.newEmail).subscribe({
+      next: (members) => {
+        this.members.set(members);
+        this.newEmail = '';
+      },
+      error: (err) => {
+        this.error.set(err.error?.message || 'Üye eklenemedi');
+      }
+    });
+  }
+
+  removeMember(memberUserId: number): void {
+    this.projectService.removeMember(this.data.projectId, memberUserId).subscribe({
+      next: (members) => this.members.set(members),
+      error: (err) => {
+        this.error.set(err.error?.message || 'Üye çıkarılamadı');
+      }
+    });
+  }
+}
