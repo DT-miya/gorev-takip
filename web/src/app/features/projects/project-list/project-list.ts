@@ -46,4 +46,21 @@ export class ProjectListComponent implements OnInit {
     }
   });
 }
+
+deleteProject(id: number, event: Event): void {
+  event.stopPropagation();
+
+  if (!confirm("Bu projeyi silmek istediğine emin misin ?")) {
+    return;
+  }
+
+  this.projectService.deleteProject(id).subscribe({
+    next: () => {
+      this.projects.set(this.projects().filter(p => p.id !== id));
+    },
+    error: (err) => {
+      console.error("Proje silinemedi", err)
+    }
+  });
+}
 }
