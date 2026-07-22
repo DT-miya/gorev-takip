@@ -1,11 +1,14 @@
-import { Project, CreateProjectRequest } from '../../core/models/project.model';
+import { Project, CreateProjectRequest, Member } from '../../core/models/project.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ProjectService {
   private apiUrl = 'http://localhost:5172/api';
 
@@ -22,4 +25,17 @@ export class ProjectService {
   deleteProject(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/Projects/${id}`);
   }
+
+  
+  getMembers(projectId: number): Observable<Member[]> {
+    return this.http.get<Member[]>(`${this.apiUrl}/Projects/${projectId}/members`);
+  }
+  addMember(projectId: number, email: string): Observable<Member[]> {
+    return this.http.post<Member[]>(`${this.apiUrl}/Projects/${projectId}/members`, { email });
+  }
+
+  removeMember(projectId: number, memberUserId: number): Observable<Member[]> {
+    return this.http.delete<Member[]>(`${this.apiUrl}/Projects/${projectId}/members/${memberUserId}`);
+  }
 }
+

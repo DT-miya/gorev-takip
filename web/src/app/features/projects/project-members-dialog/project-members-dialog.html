@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>Proje Üyeleri</h2>
+
+<mat-dialog-content>
+  <!-- Üye ekleme -->
+  <div class="add-member">
+    <mat-form-field appearance="outline" class="email-input">
+      <mat-label>E-posta</mat-label>
+      <input matInput [(ngModel)]="newEmail" placeholder="ornek@test.com" (keyup.enter)="addMember()">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="addMember()">Ekle</button>
+  </div>
+
+  <!-- Hata mesajı -->
+  @if (error()) {
+    <p class="error-msg">{{ error() }}</p>
+  }
+
+  <!-- Üye listesi -->
+  @if (loading()) {
+    <p>Yükleniyor...</p>
+  } @else {
+    <mat-list>
+      @for (member of members(); track member.userId) {
+        <mat-list-item>
+          <div class="member-row">
+            <div>
+              <strong>{{ member.fullName }}</strong>
+              <small> ({{ member.email }}) · {{ member.role }}</small>
+            </div>
+            @if (member.role !== 'Owner') {
+              <button mat-icon-button color="warn" (click)="removeMember(member.userId)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Kapat</button>
+</mat-dialog-actions>

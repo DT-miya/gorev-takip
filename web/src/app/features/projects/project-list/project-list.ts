@@ -5,6 +5,7 @@ import { Project } from '../../../core/models/project.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ProjectCreateDialog } from '../project-create-dialog/project-create-dialog';
+import { ProjectMembersDialog } from '../project-members-dialog/project-members-dialog';
 
 @Component({
   selector: 'app-project-list',
@@ -61,6 +62,14 @@ deleteProject(id: number, event: Event): void {
     error: (err) => {
       console.error("Proje silinemedi", err)
     }
+  });
+}
+
+openMembersDialog(projectId: number, event: Event): void {
+  event.stopPropagation();
+  this.dialog.open(ProjectMembersDialog, {
+    width: '500px',
+    data: { projectId }
   });
 }
 }

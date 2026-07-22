@@ -10,3 +10,10 @@ export interface CreateProjectRequest {
   name: string;
   description?: string;
 }
+
+export interface Member {
+  userId: number;
+  fullName: string;
+  email: string;
+  role: string;
+}
