@@ -67,6 +67,16 @@ public class ProjectService : IProjectService
         _context.Projects.Add(project);
         await _context.SaveChangesAsync();
 
+        var member = new ProjectMember
+    {
+        ProjectId = project.Id,
+        UserId = userId,
+        Role = ProjectRoles.Owner
+    };
+        _context.ProjectMembers.Add(member);
+        await _context.SaveChangesAsync();
+
+
         return await GetByIdAsync(project.Id, userId);
     }
     public async Task<ProjectResponse> UpdateAsync(UpdateProjectRequest request, int userId, int projectId)
