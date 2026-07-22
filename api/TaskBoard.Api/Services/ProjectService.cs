@@ -70,11 +70,13 @@ public class ProjectService : IProjectService
         await _context.SaveChangesAsync();
 
         var member = new ProjectMember
+
         {
             ProjectId = project.Id,
             UserId = userId,
             Role = ProjectRoles.Owner
         };
+
         _context.ProjectMembers.Add(member);
         await _context.SaveChangesAsync();
 
