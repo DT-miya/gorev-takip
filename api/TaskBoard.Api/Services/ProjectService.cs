@@ -12,7 +12,8 @@ public class ProjectService : IProjectService
 {
     private readonly AppDbContext _context;
 
-    public ProjectService(AppDbContext context) {
+    public ProjectService(AppDbContext context)
+    {
         _context = context;
     }
 
@@ -22,10 +23,10 @@ public class ProjectService : IProjectService
         .Where(p => p.Members.Any(m => m.UserId == userId))
         .Select(p => new ProjectResponse
         {
-            Id =p.Id,
-            Name =p.Name,
+            Id = p.Id,
+            Name = p.Name,
             Description = p.Description,
-            MemberCount =p.Members.Count,
+            MemberCount = p.Members.Count,
             OwnerName = p.Owner.FullName
         })
         .ToListAsync();
@@ -40,25 +41,26 @@ public class ProjectService : IProjectService
         .Where(p => p.Id == projectId)
         .Select(p => new ProjectResponse
         {
-            Id =p.Id,
-            Name =p.Name,
+            Id = p.Id,
+            Name = p.Name,
             Description = p.Description,
-            MemberCount =p.Members.Count,
+            MemberCount = p.Members.Count,
             OwnerName = p.Owner.FullName
         })
         .FirstOrDefaultAsync();
         if (proje == null)
         {
             throw new NotFoundException("Proje bulunamadı.");
-        } else
+        }
+        else
         {
             return proje;
         }
-        
+
     }
     public async Task<ProjectResponse> CreateAsync(CreateProjectRequest request, int userId)
     {
-        var project = new Project 
+        var project = new Project
         {
             Name = request.Name,
             Description = request.Description,
@@ -68,11 +70,13 @@ public class ProjectService : IProjectService
         await _context.SaveChangesAsync();
 
         var member = new ProjectMember
-    {
-        ProjectId = project.Id,
-        UserId = userId,
-        Role = ProjectRoles.Owner
-    };
+
+        {
+            ProjectId = project.Id,
+            UserId = userId,
+            Role = ProjectRoles.Owner
+        };
+
         _context.ProjectMembers.Add(member);
         await _context.SaveChangesAsync();
 
@@ -86,7 +90,7 @@ public class ProjectService : IProjectService
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
 
         if (project == null)
-        throw new NotFoundException("Proje bulunamadı");
+            throw new NotFoundException("Proje bulunamadı");
 
         project.Name = request.Name;
         project.Description = request.Description;
@@ -117,6 +121,7 @@ public class ProjectService : IProjectService
         if (!uyeKontrol)
         {
             throw new ForbiddenException("Erişim yetkiniz yok.");
-        };
+        }
+        ;
     }
 }

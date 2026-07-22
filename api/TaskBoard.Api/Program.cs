@@ -11,10 +11,11 @@ using TaskBoard.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// TaskService
+builder.Services.AddScoped<ITaskService, TaskService>();
 
-
-
-
+// ColumnService
+builder.Services.AddScoped<IColumnService, ColumnService>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
