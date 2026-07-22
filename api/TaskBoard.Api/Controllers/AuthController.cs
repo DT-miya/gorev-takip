@@ -43,9 +43,9 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        // Çýkýþ yapýldýðýnda Cookie'yi siliyoruz
-        Response.Cookies.Delete("jwt");
-        return Ok(new { success = true, message = "Çýkýþ yapýldý." });
+      
+        
+        return Ok(new { success = true, message = "ï¿½ï¿½kï¿½ï¿½ yapï¿½ldï¿½." });
     }
 
 }

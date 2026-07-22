@@ -1,0 +1,76 @@
+<div *ngIf="isLoading" class="loading-state">
+  <p>Pano yükleniyor...</p>
+</div>
+
+<!-- 🚀 cdkDropListGroup: Tüm kolonların birbiriyle haberleşmesini sağlar -->
+<div class="board-container" *ngIf="!isLoading && boardData" cdkDropListGroup>
+  <div class="board-header">
+    <h2>{{ boardData.projectName }}</h2>
+  </div>
+
+<div 
+    class="columns-wrapper" 
+    *ngIf="boardData.columns && boardData.columns.length > 0"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    [cdkDropListData]="boardData.columns"
+    (cdkDropListDropped)="dropColumn($event)">
+
+    <!-- 🚀 Kolon kartına cdkDrag eklendi -->
+    <div 
+      class="column-card" 
+      *ngFor="let col of boardData.columns"
+      cdkDrag>
+
+      <div class="column-header" cdkDragHandle>
+        <h3>{{ col.title }}</h3>
+        <span class="task-count">{{ col.tasks.length }}</span>
+      </div>
+
+      <!-- 🚀 cdkDropList: Görev kartlarının bırakılacağı alan -->
+      <div 
+        class="tasks-list" 
+        cdkDropList 
+        [cdkDropListData]="col.tasks" 
+        (cdkDropListDropped)="drop($event, col)">
+        
+        <!-- 🚀 cdkDrag: Sürüklenebilir kart -->
+        <div class="task-card" *ngFor="let task of col.tasks" cdkDrag>
+          <div class="task-title">{{ task.title }}</div>
+          <div class="task-footer">
+            <span class="badge" [class]="task.priority.toLowerCase()">{{ task.priority }}</span>
+            <span class="assignee" *ngIf="task.assigneeName">{{ task.assigneeName }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="add-task-section">
+        <button 
+          *ngIf="activeColumnIdForNewTask !== col.id" 
+          class="btn-add-task" 
+          (click)="toggleNewTaskForm(col.id)">
+          + Görev Ekle
+        </button>
+
+        <div *ngIf="activeColumnIdForNewTask === col.id" class="quick-task-form">
+          <input 
+            type="text" 
+            [(ngModel)]="newTaskTitle" 
+            placeholder="Görev başlığı..." 
+            (keyup.enter)="addTask(col)"
+            autofocus />
+          <div class="form-actions">
+            <button class="btn-save" (click)="addTask(col)">Ekle</button>
+            <button class="btn-cancel" (click)="toggleNewTaskForm(col.id)">✕</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="empty-board-state" *ngIf="!boardData.columns || boardData.columns.length === 0">
+    <p>Bu projede henüz hiç kolon bulunmuyor.</p>
+  </div>
+</div>

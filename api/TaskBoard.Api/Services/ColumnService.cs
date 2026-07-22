@@ -37,7 +37,7 @@ namespace TaskBoard.Api.Services
                 .Select(c => (int?)c.Order)
                 .MaxAsync() ?? 0;
 
-            // Arkadaþýnýn hazýrladýðý BoardColumn Entity'si kullanýlýyor
+            //BoardColumn Entity'si kullanÄ±lÄ±yor
             var column = new BoardColumn
             {
                 ProjectId = request.ProjectId,
@@ -54,7 +54,7 @@ namespace TaskBoard.Api.Services
         public async Task<ColumnResponse> UpdateTitleAsync(int columnId, UpdateColumnRequest request, int userId)
         {
             var column = await _context.BoardColumns.FindAsync(columnId)
-                ?? throw new KeyNotFoundException("Kolon bulunamadý.");
+                ?? throw new KeyNotFoundException("Kolon bulunamadï¿½.");
 
             await _projectService.EnsureMemberAsync(column.ProjectId, userId);
 
@@ -67,7 +67,7 @@ namespace TaskBoard.Api.Services
         public async Task<bool> DeleteAsync(int columnId, int userId)
         {
             var column = await _context.BoardColumns.FindAsync(columnId)
-                ?? throw new KeyNotFoundException("Kolon bulunamadý.");
+                ?? throw new KeyNotFoundException("Kolon bulunamadï¿½.");
 
             await _projectService.EnsureMemberAsync(column.ProjectId, userId);
 
