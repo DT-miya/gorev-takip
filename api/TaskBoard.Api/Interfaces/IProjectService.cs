@@ -16,5 +16,9 @@ public interface IProjectService
 
     Task EnsureMemberAsync(int projectId, int userId);
 
+    Task<List<MemberDto>> GetMembersAsync(int projectId, int userId);
+
+    Task<List<MemberDto>> AddMemberAsync(int projectId, AddMemberRequest request, int userId);
+
 
 }
