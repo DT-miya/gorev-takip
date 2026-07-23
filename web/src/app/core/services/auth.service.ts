@@ -1,28 +1,19 @@
+import { LoginRequest, RegisterRequest } from '@models/auth.service.model';
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '@env/environment';
 
-export interface AuthResponse {
-  token: string;
-}
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
 
-export interface RegisterRequest {
-  fullName: string;
-  email: string;
-  password: string;
-}
+export type { LoginRequest, RegisterRequest };
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   // Sizin .NET HTTP Portunuz
-  private apiUrl = 'http://localhost:5172/api';
+  private apiUrl = `${environment.apiUrl}`;
   
   isLoggedIn = signal<boolean>(!!localStorage.getItem('token'));
 

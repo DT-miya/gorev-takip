@@ -1,8 +1,11 @@
-import { Project, CreateProjectRequest, Member } from '../../core/models/project.model';
+import { Project, CreateProjectRequest, Member } from '@models/project.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@env/environment';
 
+
+export type { Project, CreateProjectRequest, Member };
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +13,7 @@ import { Observable } from 'rxjs';
 
 
 export class ProjectService {
-  private apiUrl = 'http://localhost:5172/api';
+  private apiUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 

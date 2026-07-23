@@ -1,18 +1,16 @@
+import { ReorderColumnsRequest } from '@models/column.service.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
-export interface ReorderColumnsRequest {
-  projectId: number;
-  orderedColumnIds: number[]; // 👈 Backend'in beklediği dizi formatı
-}
+export type { ReorderColumnsRequest };
 
 @Injectable({
   providedIn: 'root'
 })
 export class ColumnService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 

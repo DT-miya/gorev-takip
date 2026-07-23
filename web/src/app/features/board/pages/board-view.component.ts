@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ColumnService } from '@services/column.service';
 
 // 🚀 CDK Importları
 import { 
@@ -16,8 +17,7 @@ import {
   BoardFullResponse, 
   BoardColumn, 
   TaskItem 
-} from '@core/services/task.service';
-import { ColumnService } from '@core/services/column.service'; // 👈 Import edildiğinden emin ol
+} from '@services/task.service';
 
 @Component({
   selector: 'app-board-view',
@@ -78,7 +78,7 @@ export class BoardViewComponent implements OnInit {
 
     const reorderPayload = {
       projectId: this.projectId,
-      orderedColumnIds: this.boardData.columns.map(col => col.id)
+      orderedColumnIds: this.boardData.columns.map((col: any) => col.id)
     };
 
     this.columnService.reorderColumns(reorderPayload).subscribe({

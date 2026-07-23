@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, LoginRequest } from '../../../core/services/auth.service';
+import { AuthService, LoginRequest } from '@services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +30,7 @@ console.log("Gönderilen Login Verisi:", this.model);
     this.authService.login(this.model).subscribe({
      next: () => {
   this.isLoading = false;
-  this.router.navigate(['/taskboard']);
+  this.router.navigate(['/dashboard']); // Başarılı giriş sonrası yönlendirme
 },
       error: (err: any) => {
         this.isLoading = false;
