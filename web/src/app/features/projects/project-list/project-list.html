@@ -13,7 +13,7 @@
   } @else {
     <div class="project-grid">
       @for (project of projects(); track project.id) {
-        <div class="project-card">
+        <div class="project-card" (click)="openBoard(project.id)">
           <h3>{{ project.name }}</h3>
           <p class="description">{{ project.description }}</p>
           <small class="meta">Sahibi: {{ project.ownerName }} · {{ project.memberCount }} üye</small>
