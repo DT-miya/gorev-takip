@@ -14,7 +14,23 @@ export class ColumnService {
 
   constructor(private http: HttpClient) {}
 
-  reorderColumns(request: ReorderColumnsRequest): Observable<boolean> {
-    return this.http.post<boolean>(`${this.apiUrl}/Columns/reorder`, request);
+ // Kolon Ekleme
+  createColumn(request: { projectId: number; title: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Columns`, request);
+  }
+
+  // Kolon Adı Güncelleme
+  updateColumn(columnId: number, request: { title: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Columns/${columnId}`, request);
+  }
+
+  // Kolon Silme
+  deleteColumn(columnId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Columns/${columnId}`);
+  }
+
+  // Kolon Sıralama (Zaten var olan metodun)
+  reorderColumns(payload: { projectId: number; orderedColumnIds: number[] }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Columns/reorder`, payload);
   }
 }

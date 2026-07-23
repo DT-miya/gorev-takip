@@ -78,24 +78,48 @@ namespace TaskBoard.Api.Services
 
         public async Task<bool> MoveAsync(int taskId, MoveTaskRequest request, int userId)
         {
-            var task = await _context.Tasks.Include(t => t.Column).FirstOrDefaultAsync(t => t.Id == taskId)
-                ?? throw new KeyNotFoundException("Görev bulunamadı.");
+           var task = await _context.Tasks.FindAsync(taskId);
+    if (task == null) return false;
 
-            await _projectService.EnsureMemberAsync(task.Column.ProjectId, userId);
+    int oldColumnId = task.ColumnId;
+    int newColumnId = request.TargetColumnId;
 
-            // Eğer başka kolona taşınıyorsa hedef kolonun projesine de yetkisi var mı bak
-            if (task.ColumnId != request.TargetColumnId)
-            {
-                var targetColumn = await _context.BoardColumns.FindAsync(request.TargetColumnId)
-                    ?? throw new KeyNotFoundException("Hedef kolon bulunamadı.");
+    // 1. Görevin yeni kolonunu ve sırasını güncelle
+    task.ColumnId = newColumnId;
+    task.Order = request.NewOrder;
 
-                await _projectService.EnsureMemberAsync(targetColumn.ProjectId, userId);
-                task.ColumnId = request.TargetColumnId;
-            }
+    // 2. Hedef kolondaki DİĞER tüm görevleri çek ve mevcut sıraya göre diz
+    var targetColumnTasks = await _context.Tasks
+        .Where(t => t.ColumnId == newColumnId && t.Id != taskId)
+        .OrderBy(t => t.Order)
+        .ToListAsync();
 
-            task.Order = request.NewOrder;
-            await _context.SaveChangesAsync();
-            return true;
+    // 3. Taşınan görevi hedef listedeki istenen indekse (NewOrder - 1) araya ekle
+    int insertIndex = Math.Clamp(request.NewOrder - 1, 0, targetColumnTasks.Count);
+    targetColumnTasks.Insert(insertIndex, task);
+
+    // 4. Hedef kolondaki TÜM görevlerin Order değerlerini 1'den başlayarak sıralı biçimde yeniden yaz
+    for (int i = 0; i < targetColumnTasks.Count; i++)
+    {
+        targetColumnTasks[i].Order = i + 1;
+    }
+
+    // 5. Eğer farklı bir kolondan geldiyse, eski kolondaki kalan görevlerin sıralamasını da temizle (1, 2, 3...)
+    if (oldColumnId != newColumnId)
+    {
+        var sourceColumnTasks = await _context.Tasks
+            .Where(t => t.ColumnId == oldColumnId && t.Id != taskId)
+            .OrderBy(t => t.Order)
+            .ToListAsync();
+
+        for (int i = 0; i < sourceColumnTasks.Count; i++)
+        {
+            sourceColumnTasks[i].Order = i + 1;
+        }
+    }
+
+    await _context.SaveChangesAsync();
+    return true;
         }
 
         // 🔥 KRİTİK ENDPOINT İÇİN ÇALIŞAN METOD
