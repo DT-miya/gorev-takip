@@ -10,7 +10,7 @@ import { AuthService } from '@services/auth.service';
   imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule],
   template: `
     @if (authService.isLoggedIn()) {
-      <mat-toolbar color="primary">
+      <mat-toolbar>
         <span class="app-title">Görev Takip</span>
         <span class="spacer"></span>
         <a mat-button routerLink="/dashboard">Panelim</a>
@@ -22,7 +22,11 @@ import { AuthService } from '@services/auth.service';
   `,
   styles: [`
     .spacer { flex: 1 1 auto; }
-    .app-title { font-weight: 600; }
+    .app-title { font-weight: 600; letter-spacing: 0.5px; }
+    mat-toolbar {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    }
   `]
 })
 export class AppComponent {
