@@ -4,14 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
-
 export type { Project, CreateProjectRequest, Member };
 
 @Injectable({
   providedIn: 'root'
 })
-
-
 export class ProjectService {
   private apiUrl = `${environment.apiUrl}`;
 
@@ -29,10 +26,10 @@ export class ProjectService {
     return this.http.delete<void>(`${this.apiUrl}/Projects/${id}`);
   }
 
-  
   getMembers(projectId: number): Observable<Member[]> {
     return this.http.get<Member[]>(`${this.apiUrl}/Projects/${projectId}/members`);
   }
+
   addMember(projectId: number, email: string): Observable<Member[]> {
     return this.http.post<Member[]>(`${this.apiUrl}/Projects/${projectId}/members`, { email });
   }
@@ -40,5 +37,8 @@ export class ProjectService {
   removeMember(projectId: number, memberUserId: number): Observable<Member[]> {
     return this.http.delete<Member[]>(`${this.apiUrl}/Projects/${projectId}/members/${memberUserId}`);
   }
-}
 
+  updateProject(projectId: number, data: CreateProjectRequest): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/Projects/${projectId}`, data);
+  }
+}

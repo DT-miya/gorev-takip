@@ -5,6 +5,7 @@ import { TaskboardComponent } from './features/taskboard/taskboard.component';
 import { ProjectListComponent } from './features/projects/project-list/project-list';
 import { authGuard } from './core/guards/auth.guard';
 import { BoardViewComponent } from './features/board/pages/board-view.component';
+import { DashboardPage } from './features/dashboard/dashboard-page/dashboard-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -27,6 +28,12 @@ export const routes: Routes = [
     path: 'projects',
     component: ProjectListComponent,
     canActivate: [authGuard]
-  }
+  },
+
+  {
+  path: 'dashboard',
+  component: DashboardPage,
+  canActivate: [authGuard]
+  } 
 
 ];

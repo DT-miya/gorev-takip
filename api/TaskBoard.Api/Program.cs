@@ -14,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // TaskService
 builder.Services.AddScoped<ITaskService, TaskService>();
 
+//DashboardService
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
 // ColumnService
 builder.Services.AddScoped<IColumnService, ColumnService>();
 
