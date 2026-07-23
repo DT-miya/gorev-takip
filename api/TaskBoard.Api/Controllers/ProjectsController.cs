@@ -45,7 +45,7 @@ public async Task<IActionResult> GetById(int id)
 public async Task<IActionResult> Update(int id, UpdateProjectRequest request)
 {
     var userId = GetUserId();
-    var project = await _projectService.UpdateAsync(request, id, userId);
+    var project = await _projectService.UpdateAsync(request, userId, id);
     return Ok(project);
 }
 [HttpPost]

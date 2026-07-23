@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ProjectCreateDialog } from '../project-create-dialog/project-create-dialog';
 import { ProjectMembersDialog } from '../project-members-dialog/project-members-dialog';
 import { Router } from '@angular/router';
+import { ProjectEditDialog } from '../project-edit-dialog/project-edit-dialog';
 
 @Component({
   selector: 'app-project-list',
@@ -76,5 +77,20 @@ openMembersDialog(projectId: number, event: Event): void {
 
 openBoard(projectId: number): void {
   this.router.navigate(['/projects', projectId, 'board']);
+}
+openEditDialog(project: Project, event: Event): void {
+  event.stopPropagation();
+  const dialogRef = this.dialog.open(ProjectEditDialog, {
+    width: '400px',
+    data: { project }
+  });
+
+  dialogRef.afterClosed().subscribe((updated) => {
+    if (updated) {
+      this.projects.set(
+        this.projects().map(p => p.id === updated.id ? updated : p)
+      );
+    }
+  });
 }
 }

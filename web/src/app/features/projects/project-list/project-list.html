@@ -25,6 +25,7 @@
           <p class="description">{{ project.description }}</p>
           <small class="meta">Sahibi: {{ project.ownerName }} · {{ project.memberCount }} üye</small>
           <div class="card-actions">
+            <button mat-button (click)="openEditDialog(project, $event)">Düzenle</button>
             <button mat-button (click)="openMembersDialog(project.id, $event)">Üyeler</button>
             <button mat-button color="warn" (click)="deleteProject(project.id, $event)">Sil</button>
           </div>

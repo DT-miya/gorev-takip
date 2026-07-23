@@ -37,4 +37,8 @@ export class ProjectService {
   removeMember(projectId: number, memberUserId: number): Observable<Member[]> {
     return this.http.delete<Member[]>(`${this.apiUrl}/Projects/${projectId}/members/${memberUserId}`);
   }
+
+  updateProject(projectId: number, data: CreateProjectRequest): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/Projects/${projectId}`, data);
+  }
 }

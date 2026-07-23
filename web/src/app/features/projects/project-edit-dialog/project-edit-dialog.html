@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Projeyi Düzenle</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Proje Adı</mat-label>
+    <input matInput [(ngModel)]="name">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Açıklama</mat-label>
+    <textarea matInput [(ngModel)]="description" rows="3"></textarea>
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="error-msg">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">İptal</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="saving()">
+    Kaydet
+  </button>
+</mat-dialog-actions>
