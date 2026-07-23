@@ -1,43 +1,9 @@
+import { BoardFullResponse, CreateTaskRequest, MoveTaskRequest, TaskItem, UpdateTaskRequest } from '../models/task.service.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@environment/environment';
 
-export interface TaskItem {
-  id: number;
-  columnId: number;
-  title: string;
-  description?: string;
-  priority: string;
-  order: number;
-  assigneeId?: number;
-  assigneeName?: string;
-}
-
-export interface BoardColumn {
-  id: number;
-  title: string;
-  order: number;
-  tasks: TaskItem[];
-}
-
-export interface BoardFullResponse {
-  projectId: number;
-  projectName: string;
-  columns: BoardColumn[];
-}
-
-export interface CreateTaskRequest {
-  columnId: number;
-  title: string;
-  description?: string;
-  priority?: string;
-}
-
-export interface MoveTaskRequest {
-  targetColumnId: number;
-  newOrder: number;
-}
 
 
 @Injectable({
@@ -60,6 +26,15 @@ export class TaskService {
 
 moveTask(taskId: number, request: MoveTaskRequest): Observable<TaskItem> {
   return this.http.post<TaskItem>(`${this.apiUrl}/Tasks/${taskId}/move`, request);
+}
+
+
+updateTask(taskId: number, request: UpdateTaskRequest): Observable<TaskItem> {
+  return this.http.put<TaskItem>(`${this.apiUrl}/Tasks/${taskId}`, request);
+}
+
+deleteTask(taskId: number): Observable<boolean> {
+  return this.http.delete<boolean>(`${this.apiUrl}/Tasks/${taskId}`);
 }
 
 

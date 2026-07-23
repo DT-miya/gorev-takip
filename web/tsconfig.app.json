@@ -9,7 +9,9 @@
     "@core/*": ["./src/app/core/*"],
     "@features/*": ["./src/app/features/*"],
     "@shared/*": ["./src/app/shared/*"],
-    "@env/*": ["./src/environments/*"]  
+    "@environments/*": ["./src/environments/*"],
+    "@models/*": ["./src/app/core/models/*"],
+    "@services/*": ["./src/app/core/services/*"],
     }
   },
   "files":
