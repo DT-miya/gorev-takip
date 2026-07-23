@@ -5,18 +5,20 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": [],
-    "paths": {
-    "@core/*": ["./src/app/core/*"],
-    "@features/*": ["./src/app/features/*"],
-    "@shared/*": ["./src/app/shared/*"],
-    "@env/*": ["./src/environments/*"]  
-    }
+   "paths": {
+  "@core/*": ["./src/app/core/*"],
+  "@features/*": ["./src/app/features/*"],
+  "@shared/*": ["./src/app/shared/*"],
+  "@env/*": ["./src/environments/*"],
+  "@models/*": ["./src/app/core/models/*"],
+  "@services/*": ["./src/app/core/services/*"]
+}
   },
   "files":
   [
     "src/main.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.ts"
   ]
 }

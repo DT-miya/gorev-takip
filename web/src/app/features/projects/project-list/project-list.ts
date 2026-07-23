@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProjectService } from '../project.service';
-import { Project } from '../../../core/models/project.model';
+import { ProjectService } from '@services/project.service';
+import { Project } from '@models/project.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ProjectCreateDialog } from '../project-create-dialog/project-create-dialog';

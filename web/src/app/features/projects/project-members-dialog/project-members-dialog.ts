@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { ProjectService } from '../project.service';
-import { Member } from '../../../core/models/project.model';
+import { ProjectService } from '@services/project.service';
+import { Member } from '@models/project.model';
 
 @Component({
   selector: 'app-project-members-dialog',
