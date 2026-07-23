@@ -8,4 +8,6 @@ public class TaskResponse
     public int Order { get; set; }
     public int? AssigneeId { get; set; }
     public string? AssigneeName { get; set; }
+
+    public DateTime? DueDate { get; set; }
 }

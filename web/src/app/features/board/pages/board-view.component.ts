@@ -2,9 +2,18 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ColumnService } from '@services/column.service';
 
-// 🚀 CDK Importları
+// 🚀 Servis & Model Importları
+import { TaskService } from '@services/task.service';
+import type { BoardFullResponse, BoardColumn, TaskItem, UpdateTaskRequest } from '@services/task.service';
+import { ColumnService } from '@services/column.service';
+import { ProjectService } from '@services/project.service';
+import type { Member } from '@services/project.service';
+
+// 🚀 Component Import
+import { TaskDetailDialogComponent } from '../components/task-detail-dialog/task-detail-dialog';
+
+// 🚀 CDK Drag & Drop Importları
 import { 
   DragDropModule, 
   CdkDragDrop, 
@@ -12,17 +21,15 @@ import {
   transferArrayItem 
 } from '@angular/cdk/drag-drop';
 
-import { 
-  TaskService, 
-  BoardFullResponse, 
-  BoardColumn, 
-  TaskItem 
-} from '@services/task.service';
-
 @Component({
   selector: 'app-board-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    DragDropModule, 
+    TaskDetailDialogComponent
+  ],
   templateUrl: './board-view.component.html',
   styleUrls: ['./board-view.component.css']
 })
@@ -33,11 +40,19 @@ export class BoardViewComponent implements OnInit {
 
   activeColumnIdForNewTask: number | null = null;
   newTaskTitle: string = '';
+  newTaskPriority: string = 'Medium';
+  priorityOptions = ['Low', 'Medium', 'High'];
+
+  // 🚀 Task Detail Dialog State & Data
+  isDetailModalOpen = false;
+  selectedTask: TaskItem | null = null;
+  projectMembers: Member[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private taskService: TaskService,
-    private columnService: ColumnService, // 📍 DÜZELTME 1: Constructor'a enjekte edildi
+    private columnService: ColumnService,
+    private projectService: ProjectService, // 📍 ProjectService eklendi
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -56,6 +71,7 @@ export class BoardViewComponent implements OnInit {
       next: (data: BoardFullResponse) => {
         this.boardData = data;
         this.isLoading = false;
+        this.loadMembers(); // 📍 Pano yuklenince proje üyelerini de cekiyoruz
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -63,6 +79,52 @@ export class BoardViewComponent implements OnInit {
         this.isLoading = false;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  // 🚀 PROJE ÜYELERİNİ ÇEKME (Dropdown için)
+ loadMembers(): void {
+    this.projectService.getMembers(this.projectId).subscribe({
+      next: (members: Member[]) => {
+        this.projectMembers = members;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => console.error('Üyeler yüklenemedi:', err)
+    });
+  }
+
+  // 🚀 TASK DETAIL DIALOG İŞLEMLERİ
+  openTaskDetail(task: TaskItem): void {
+    this.selectedTask = task;
+    this.isDetailModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeTaskDetail(): void {
+    this.isDetailModalOpen = false;
+    this.selectedTask = null;
+    this.cdr.detectChanges();
+  }
+
+  saveTaskDetail(request: UpdateTaskRequest): void {
+    if (!this.selectedTask) return;
+
+    this.taskService.updateTask(this.selectedTask.id, request).subscribe({
+      next: () => {
+        this.loadBoard(); // Ekrandaki verileri güncelle
+        this.closeTaskDetail();
+      },
+      error: (err: any) => console.error('Görev güncellenemedi:', err)
+    });
+  }
+
+  deleteTaskDetail(taskId: number): void {
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => {
+        this.loadBoard(); // Ekrandaki verileri güncelle
+        this.closeTaskDetail();
+      },
+      error: (err: any) => console.error('Görev silinemedi:', err)
     });
   }
 
@@ -82,7 +144,6 @@ export class BoardViewComponent implements OnInit {
     };
 
     this.columnService.reorderColumns(reorderPayload).subscribe({
-      // 📍 DÜZELTME 2: 'err: any' şeklinde tipi belirtildi
       error: (err: any) => {
         console.error('Kolon sırası kaydedilemedi:', err);
         this.loadBoard();
@@ -130,6 +191,7 @@ export class BoardViewComponent implements OnInit {
     } else {
       this.activeColumnIdForNewTask = columnId;
       this.newTaskTitle = '';
+      this.newTaskPriority = 'Medium'; // Varsayılan öncelik 'Medium'
     }
     this.cdr.detectChanges();
   }
@@ -140,7 +202,7 @@ export class BoardViewComponent implements OnInit {
     const request = {
       columnId: column.id,
       title: this.newTaskTitle.trim(),
-      priority: 'Medium'
+      priority: this.newTaskPriority || 'Medium', // Varsayılan öncelik 'Medium'
     };
 
     this.taskService.createTask(request).subscribe({

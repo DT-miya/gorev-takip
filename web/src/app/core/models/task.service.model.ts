@@ -7,6 +7,7 @@ export interface TaskItem {
   order: number;
   assigneeId?: number;
   assigneeName?: string;
+  dueDate?: string | null;
 }
 
 export interface BoardColumn {

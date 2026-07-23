@@ -1,0 +1,80 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3>Görev Detayı</h3>
+      <button type="button" class="btn-close" (click)="onClose()">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      
+      <!-- Başlık -->
+      <div class="form-group">
+        <label for="task-title">Görev Başlığı</label>
+        <input 
+          id="task-title"
+          type="text" 
+          [(ngModel)]="formData.title" 
+          placeholder="Görev başlığını girin..." 
+          class="form-control" />
+      </div>
+
+      <!-- Açıklama -->
+      <div class="form-group">
+        <label for="task-desc">Açıklama</label>
+        <textarea 
+          id="task-desc"
+          [(ngModel)]="formData.description" 
+          rows="4" 
+          placeholder="Görev açıklaması yazın..." 
+          class="form-control"></textarea>
+      </div>
+
+      <div class="form-row">
+        <!-- Atama (Üyeler Dropdown - GET /projects/{id}/members beslemeli) -->
+        <div class="form-group col">
+          <label for="task-assignee">Atanan Kişi</label>
+          <select id="task-assignee" [(ngModel)]="formData.assigneeId" class="form-control">
+            <option [ngValue]="null">Atanmadı</option>
+            <option *ngFor="let m of members" [ngValue]="m.userId">
+              {{ m.fullName }} ({{ m.role }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Öncelik Seçimi -->
+        <div class="form-group col">
+          <label for="task-priority">Öncelik</label>
+          <select id="task-priority" [(ngModel)]="formData.priority" class="form-control">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Son Tarih (Opsiyonel) -->
+      <div class="form-group">
+        <label for="task-duedate">Son Tarih (Opsiyonel)</label>
+        <input 
+          id="task-duedate"
+          type="date" 
+          [(ngModel)]="formData.dueDate" 
+          class="form-control" />
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" class="btn-delete" (click)="onDelete()">🗑️ Görevi Sil</button>
+      <div class="right-actions">
+        <button type="button" class="btn-cancel" (click)="onClose()">İptal</button>
+        <button type="button" class="btn-save" (click)="onSave()">Kaydet</button>
+      </div>
+    </div>
+
+  </div>
+</div>

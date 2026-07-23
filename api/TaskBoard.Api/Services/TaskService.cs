@@ -58,6 +58,7 @@ namespace TaskBoard.Api.Services
             task.Description = request.Description;
             task.Priority = request.Priority;
             task.AssigneeId = request.AssigneeId;
+            task.DueDate = request.DueDate;
 
             await _context.SaveChangesAsync();
             return await MapToResponseAsync(task.Id);
@@ -131,7 +132,8 @@ namespace TaskBoard.Api.Services
                 Priority = t.Priority,
                 Order = t.Order,
                 AssigneeId = t.AssigneeId,
-                AssigneeName = t.Assignee?.FullName
+                AssigneeName = t.Assignee?.FullName,
+                DueDate = t.DueDate
             }).ToList()
         }).ToList()
     };
@@ -149,7 +151,8 @@ namespace TaskBoard.Api.Services
                 Priority = t.Priority,
                 Order = t.Order,
                 AssigneeId = t.AssigneeId,
-                AssigneeName = t.Assignee?.FullName
+                AssigneeName = t.Assignee?.FullName,
+                DueDate = t.DueDate
             };
         }
     }
