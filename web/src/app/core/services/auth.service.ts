@@ -25,6 +25,7 @@ export class AuthService {
       if (response && response.token) {
         // Token'ı localStorage'a kaydediyoruz
         localStorage.setItem('token', response.token);
+        this.isLoggedIn.set(true);
       }
     })
   );
