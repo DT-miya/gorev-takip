@@ -9,8 +9,15 @@
   @if (loading()) {
     <p>Yükleniyor...</p>
   } @else if (projects().length === 0) {
-    <p>Henüz projen yok.</p>
-  } @else {
+  <div class="empty-state">
+    <div class="empty-icon">📁</div>
+    <h3>Henüz projen yok</h3>
+    <p>İlk projeni oluşturarak başla.</p>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      + Yeni Proje
+    </button>
+  </div>
+} @else {
     <div class="project-grid">
       @for (project of projects(); track project.id) {
         <div class="project-card" (click)="openBoard(project.id)">

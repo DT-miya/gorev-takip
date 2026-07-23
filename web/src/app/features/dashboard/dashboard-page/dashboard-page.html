@@ -4,8 +4,13 @@
   @if (loading()) {
     <p>Yükleniyor...</p>
   } @else if (tasks().length === 0) {
-    <p class="empty">Sana atanmış görev yok.</p>
-  } @else {
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>Sana atanmış görev yok</h3>
+    <p>Bir projeye katıldığında ya da sana görev atandığında burada görünecek.</p>
+    <a mat-raised-button color="primary" routerLink="/projects">Projelerime Git</a>
+  </div>
+} @else {
     <div class="task-list">
       @for (task of tasks(); track task.id) {
         <div class="task-item" (click)="openBoard(task.projectId)">

@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { AssignedTask } from '../../../core/models/dashboard.model';
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, MatButtonModule],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
 })

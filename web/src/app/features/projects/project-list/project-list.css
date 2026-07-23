@@ -65,3 +65,25 @@
   border-top: 1px solid #f0f0f0;
   padding-top: 12px;
 }
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+}
