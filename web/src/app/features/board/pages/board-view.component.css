@@ -191,6 +191,10 @@
   opacity: 0.3;
 }
 
+.cdk-drag:hover{
+  cursor: pointer;
+}
+
 /* Sürükleme yapılırken farenin ucundaki kart stili */
 .cdk-drag-preview {
   box-sizing: border-box;
@@ -207,4 +211,42 @@
 
 .cdk-drag-animating {
   transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.add-task-form {
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.select-priority {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background-color: #f9fafb;
+}
+
+.form-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.due-date {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }

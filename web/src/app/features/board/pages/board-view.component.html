@@ -35,11 +35,15 @@
         (cdkDropListDropped)="drop($event, col)">
         
         <!-- 🚀 cdkDrag: Sürüklenebilir kart -->
-        <div class="task-card" *ngFor="let task of col.tasks" cdkDrag>
+        <div class="task-card" *ngFor="let task of col.tasks" cdkDrag (click)="openTaskDetail(task)">
           <div class="task-title">{{ task.title }}</div>
           <div class="task-footer">
             <span class="badge" [class]="task.priority.toLowerCase()">{{ task.priority }}</span>
             <span class="assignee" *ngIf="task.assigneeName">{{ task.assigneeName }}</span>
+            <!-- 📅 Son Tarih Gösterimi -->
+    <span class="due-date" *ngIf="task.dueDate">
+      📅 {{ task.dueDate | date:'dd MMM' }}
+    </span>
           </div>
         </div>
 
@@ -60,6 +64,12 @@
             placeholder="Görev başlığı..." 
             (keyup.enter)="addTask(col)"
             autofocus />
+            <div class="form-group mb-2">
+      <select [(ngModel)]="newTaskPriority" class="form-control select-priority">
+        <option *ngFor="let priority of priorityOptions" [value]="priority">{{ priority }}</option>
+      </select>
+    </div>
+
           <div class="form-actions">
             <button class="btn-save" (click)="addTask(col)">Ekle</button>
             <button class="btn-cancel" (click)="toggleNewTaskForm(col.id)">✕</button>
@@ -74,3 +84,14 @@
     <p>Bu projede henüz hiç kolon bulunmuyor.</p>
   </div>
 </div>
+
+
+<app-task-detail-dialog
+  *ngIf="isDetailModalOpen && selectedTask"
+  [task]="selectedTask"
+  [members]="projectMembers"
+  [isOpen]="isDetailModalOpen"
+  (close)="closeTaskDetail()"
+  (save)="saveTaskDetail($event)"
+  (delete)="deleteTaskDetail($event)">
+</app-task-detail-dialog>
