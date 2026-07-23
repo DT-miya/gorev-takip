@@ -1,9 +1,10 @@
-import { ReorderColumnsRequest } from '../models/column.service.model';
+import { ReorderColumnsRequest } from '@models/column.service.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '@environment/environment';
+import { environment } from '@env/environment';
 
+export type { ReorderColumnsRequest };
 
 @Injectable({
   providedIn: 'root'

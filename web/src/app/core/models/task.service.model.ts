@@ -41,3 +41,4 @@ export interface UpdateTaskRequest {
   assigneeId?: number | null;
   dueDate?: string | null;
 }
+

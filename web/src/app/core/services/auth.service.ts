@@ -1,9 +1,12 @@
-import { LoginRequest, RegisterRequest } from '@app/core/models/auth.model';
+import { LoginRequest, RegisterRequest } from '@models/auth.service.model';
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '@environment/environment';
+import { environment } from '@env/environment';
 
+
+
+export type { LoginRequest, RegisterRequest };
 
 @Injectable({
   providedIn: 'root'

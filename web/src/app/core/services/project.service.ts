@@ -1,8 +1,11 @@
-import { Project, CreateProjectRequest, Member } from '../models/project.model';
+import { Project, CreateProjectRequest, Member } from '@models/project.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '@environment/environment';
+import { environment } from '@env/environment';
+
+
+export type { Project, CreateProjectRequest, Member };
 
 @Injectable({
   providedIn: 'root'

@@ -1,10 +1,10 @@
-import { BoardFullResponse, CreateTaskRequest, MoveTaskRequest, TaskItem, UpdateTaskRequest } from '../models/task.service.model';
+import { BoardFullResponse, BoardColumn, CreateTaskRequest, MoveTaskRequest, TaskItem, UpdateTaskRequest } from '@models/task.service.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '@environment/environment';
+import { environment } from '@env/environment';
 
-
+export type { BoardFullResponse, BoardColumn, CreateTaskRequest, MoveTaskRequest, TaskItem, UpdateTaskRequest };
 
 @Injectable({
   providedIn: 'root'

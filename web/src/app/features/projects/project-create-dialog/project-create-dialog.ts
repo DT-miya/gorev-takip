@@ -5,7 +5,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ProjectService } from '../project.service';
+import { ProjectService } from '@services/project.service';
 
 @Component({
   selector: 'app-project-create-dialog',
