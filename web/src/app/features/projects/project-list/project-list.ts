@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ProjectCreateDialog } from '../project-create-dialog/project-create-dialog';
 import { ProjectMembersDialog } from '../project-members-dialog/project-members-dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-list',
@@ -18,7 +19,7 @@ export class ProjectListComponent implements OnInit {
   projects = signal<Project[]>([]);
   loading = signal(true);
 
-  constructor(private projectService: ProjectService, private dialog: MatDialog) {}
+  constructor(private projectService: ProjectService, private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     console.log("ngOnit çalışıyor")
@@ -71,5 +72,9 @@ openMembersDialog(projectId: number, event: Event): void {
     width: '500px',
     data: { projectId }
   });
+}
+
+openBoard(projectId: number): void {
+  this.router.navigate(['/projects', projectId, 'board']);
 }
 }
