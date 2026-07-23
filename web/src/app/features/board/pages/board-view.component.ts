@@ -10,7 +10,7 @@ import { ColumnService } from '@services/column.service';
 import { ProjectService } from '@services/project.service';
 import type { Member } from '@services/project.service';
 
-// 🚀 Component Import
+// 🚀 Dialog Component Import
 import { TaskDetailDialogComponent } from '../components/task-detail-dialog/task-detail-dialog';
 
 // 🚀 CDK Drag & Drop Importları
@@ -41,7 +41,12 @@ export class BoardViewComponent implements OnInit {
   activeColumnIdForNewTask: number | null = null;
   newTaskTitle: string = '';
   newTaskPriority: string = 'Medium';
-  priorityOptions = ['Low', 'Medium', 'High'];
+
+  // 🚀 Kolon Yönetimi State
+  isAddingColumn = false;
+  newColumnTitle = '';
+  editingColumnId: number | null = null;
+  editingColumnTitle = '';
 
   // 🚀 Task Detail Dialog State & Data
   isDetailModalOpen = false;
@@ -52,7 +57,7 @@ export class BoardViewComponent implements OnInit {
     private route: ActivatedRoute,
     private taskService: TaskService,
     private columnService: ColumnService,
-    private projectService: ProjectService, // 📍 ProjectService eklendi
+    private projectService: ProjectService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -71,7 +76,7 @@ export class BoardViewComponent implements OnInit {
       next: (data: BoardFullResponse) => {
         this.boardData = data;
         this.isLoading = false;
-        this.loadMembers(); // 📍 Pano yuklenince proje üyelerini de cekiyoruz
+        this.loadMembers();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -82,8 +87,8 @@ export class BoardViewComponent implements OnInit {
     });
   }
 
-  // 🚀 PROJE ÜYELERİNİ ÇEKME (Dropdown için)
- loadMembers(): void {
+  // 🚀 PROJE ÜYELERİNİ ÇEKME
+  loadMembers(): void {
     this.projectService.getMembers(this.projectId).subscribe({
       next: (members: Member[]) => {
         this.projectMembers = members;
@@ -93,44 +98,10 @@ export class BoardViewComponent implements OnInit {
     });
   }
 
-  // 🚀 TASK DETAIL DIALOG İŞLEMLERİ
-  openTaskDetail(task: TaskItem): void {
-    this.selectedTask = task;
-    this.isDetailModalOpen = true;
-    this.cdr.detectChanges();
-  }
-
-  closeTaskDetail(): void {
-    this.isDetailModalOpen = false;
-    this.selectedTask = null;
-    this.cdr.detectChanges();
-  }
-
-  saveTaskDetail(request: UpdateTaskRequest): void {
-    if (!this.selectedTask) return;
-
-    this.taskService.updateTask(this.selectedTask.id, request).subscribe({
-      next: () => {
-        this.loadBoard(); // Ekrandaki verileri güncelle
-        this.closeTaskDetail();
-      },
-      error: (err: any) => console.error('Görev güncellenemedi:', err)
-    });
-  }
-
-  deleteTaskDetail(taskId: number): void {
-    this.taskService.deleteTask(taskId).subscribe({
-      next: () => {
-        this.loadBoard(); // Ekrandaki verileri güncelle
-        this.closeTaskDetail();
-      },
-      error: (err: any) => console.error('Görev silinemedi:', err)
-    });
-  }
-
-  // 🚀 KOLON SIRALAMA MANTIĞI
+  // 🚀 KOLON SIRALAMA MANTIĞI (Tekil Metot)
   dropColumn(event: CdkDragDrop<BoardColumn[]>): void {
     if (!this.boardData || !this.boardData.columns) return;
+    if (event.previousIndex === event.currentIndex) return;
 
     moveItemInArray(
       this.boardData.columns, 
@@ -153,45 +124,163 @@ export class BoardViewComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // 🚀 GÖREV SÜRÜKLE - BIRAK MANTIĞI
-  drop(event: CdkDragDrop<TaskItem[]>, targetColumn: BoardColumn): void {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data, 
-        event.previousIndex, 
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+  // 🚀 GÖREV SÜRÜKLE - BIRAK MANTIĞI (Sıralama Kaybını Önleyen Versiyon)
+drop(event: CdkDragDrop<TaskItem[]>, targetColumn: BoardColumn): void {
+  // 1. Aynı yere bırakıldıysa işlem yapma
+  if (
+    event.previousContainer === event.container &&
+    event.previousIndex === event.currentIndex
+  ) {
+    return;
+  }
+
+  // 2. Frontend dizisini anlık olarak güncelle
+  if (event.previousContainer === event.container) {
+    moveItemInArray(
+      event.container.data, 
+      event.previousIndex, 
+      event.currentIndex
+    );
+  } else {
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    );
+  }
+
+  // 3. Taşınan görevi ve yeni sırasını tespit et
+  const movedTask = event.container.data[event.currentIndex];
+  
+  // Backend sırası 1-based (1'den başlayan) kabul ediliyorsa + 1 ekliyoruz
+  const calculatedNewOrder = event.currentIndex + 1;
+
+  // 4. API İsteği
+  this.taskService.moveTask(movedTask.id, {
+    targetColumnId: targetColumn.id,
+    newOrder: calculatedNewOrder
+  }).subscribe({
+    next: () => {
+      // Başarılı olduğunda lokal objede de columnId ve order'ı güncelle
+      movedTask.columnId = targetColumn.id;
+      movedTask.order = calculatedNewOrder;
+    },
+    error: (err: any) => {
+      console.error('Görev taşıma kaydedilemedi:', err);
+      // Hata durumunda eski sırayı korumak için panoyu yeniden yükle
+      this.loadBoard();
     }
+  });
 
-    const movedTask = event.container.data[event.currentIndex];
-    
-    this.taskService.moveTask(movedTask.id, {
-      targetColumnId: targetColumn.id,
-      newOrder: event.currentIndex + 1
-    }).subscribe({
-      error: (err: any) => {
-        console.error('Görev taşıma kaydedilemedi:', err);
-        this.loadBoard();
-      }
-    });
+  this.cdr.detectChanges();
+}
 
+  // 🚀 KOLON EKLEME / DÜZENLEME / SİLME İŞLEMLERİ
+  toggleAddColumnForm(): void {
+    this.isAddingColumn = !this.isAddingColumn;
+    this.newColumnTitle = '';
     this.cdr.detectChanges();
   }
 
+  addColumn(): void {
+    if (!this.newColumnTitle.trim()) return;
+
+    this.columnService.createColumn({
+      projectId: this.projectId,
+      title: this.newColumnTitle.trim()
+    }).subscribe({
+      next: () => {
+        this.isAddingColumn = false;
+        this.newColumnTitle = '';
+        this.loadBoard();
+      },
+      error: (err: any) => console.error('Kolon eklenemedi:', err)
+    });
+  }
+
+  startRenameColumn(column: BoardColumn, event: Event): void {
+    event.stopPropagation();
+    this.editingColumnId = column.id;
+    this.editingColumnTitle = column.title;
+    this.cdr.detectChanges();
+  }
+
+  cancelRenameColumn(): void {
+    this.editingColumnId = null;
+    this.editingColumnTitle = '';
+    this.cdr.detectChanges();
+  }
+
+  saveRenameColumn(columnId: number): void {
+    if (!this.editingColumnTitle.trim()) return;
+
+    this.columnService.updateColumn(columnId, { title: this.editingColumnTitle.trim() }).subscribe({
+      next: () => {
+        this.editingColumnId = null;
+        this.loadBoard();
+      },
+      error: (err: any) => console.error('Kolon adı güncellenemedi:', err)
+    });
+  }
+
+  deleteColumn(columnId: number, event: Event): void {
+    event.stopPropagation();
+    if (confirm('Bu kolonu ve içindeki tüm görevleri silmek istediğinize emin misiniz?')) {
+      this.columnService.deleteColumn(columnId).subscribe({
+        next: () => this.loadBoard(),
+        error: (err: any) => console.error('Kolon silinemedi:', err)
+      });
+    }
+  }
+
+  // 🚀 TASK DETAIL DIALOG İŞLEMLERİ
+  openTaskDetail(task: TaskItem): void {
+    this.selectedTask = task;
+    this.isDetailModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  openTaskDetailDialog(task: TaskItem): void {
+    this.openTaskDetail(task);
+  }
+
+  closeTaskDetail(): void {
+    this.isDetailModalOpen = false;
+    this.selectedTask = null;
+    this.cdr.detectChanges();
+  }
+
+  saveTaskDetail(request: UpdateTaskRequest): void {
+    if (!this.selectedTask) return;
+
+    this.taskService.updateTask(this.selectedTask.id, request).subscribe({
+      next: () => {
+        this.loadBoard();
+        this.closeTaskDetail();
+      },
+      error: (err: any) => console.error('Görev güncellenemedi:', err)
+    });
+  }
+
+  deleteTaskDetail(taskId: number): void {
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => {
+        this.loadBoard();
+        this.closeTaskDetail();
+      },
+      error: (err: any) => console.error('Görev silinemedi:', err)
+    });
+  }
+
+  // 🚀 HIZLI GÖREV EKLEME
   toggleNewTaskForm(columnId: number): void {
     if (this.activeColumnIdForNewTask === columnId) {
       this.activeColumnIdForNewTask = null;
     } else {
       this.activeColumnIdForNewTask = columnId;
       this.newTaskTitle = '';
-      this.newTaskPriority = 'Medium'; // Varsayılan öncelik 'Medium'
+      this.newTaskPriority = 'Medium';
     }
     this.cdr.detectChanges();
   }
@@ -202,7 +291,7 @@ export class BoardViewComponent implements OnInit {
     const request = {
       columnId: column.id,
       title: this.newTaskTitle.trim(),
-      priority: this.newTaskPriority || 'Medium', // Varsayılan öncelik 'Medium'
+      priority: this.newTaskPriority || 'Medium'
     };
 
     this.taskService.createTask(request).subscribe({
@@ -214,5 +303,23 @@ export class BoardViewComponent implements OnInit {
       },
       error: (err: any) => console.error('Görev eklenemedi:', err)
     });
+  }
+
+  // 🚀 YARDIMCI METOTLAR
+  isOverdue(dueDateStr?: string | null): boolean {
+    if (!dueDateStr) return false;
+    const dueDate = new Date(dueDateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate < today;
+  }
+
+  getInitials(name?: string | null): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

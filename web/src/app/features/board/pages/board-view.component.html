@@ -2,53 +2,91 @@
   <p>Pano yükleniyor...</p>
 </div>
 
-<!-- 🚀 cdkDropListGroup: Tüm kolonların birbiriyle haberleşmesini sağlar -->
 <div class="board-container" *ngIf="!isLoading && boardData" cdkDropListGroup>
+  
   <div class="board-header">
     <h2>{{ boardData.projectName }}</h2>
   </div>
 
-<div 
+  <!-- KOLONLARIN YAN YANA DİZİLDİĞİ ANA ALAN -->
+  <div 
     class="columns-wrapper" 
-    *ngIf="boardData.columns && boardData.columns.length > 0"
-    cdkDropList
+    cdkDropList 
     cdkDropListOrientation="horizontal"
     [cdkDropListData]="boardData.columns"
     (cdkDropListDropped)="dropColumn($event)">
 
-    <!-- 🚀 Kolon kartına cdkDrag eklendi -->
+    <!-- KOLON KARTI -->
     <div 
       class="column-card" 
-      *ngFor="let col of boardData.columns"
+      *ngFor="let col of boardData.columns" 
       cdkDrag>
 
+      <!-- Kolon Sürükleme Tutamağı ve Başlık -->
       <div class="column-header" cdkDragHandle>
-        <h3>{{ col.title }}</h3>
-        <span class="task-count">{{ col.tasks.length }}</span>
+        
+        <ng-container *ngIf="editingColumnId !== col.id">
+          <h3>{{ col.title }} <span class="task-count">({{ col.tasks.length }})</span></h3>
+          <div class="column-actions">
+            <button type="button" class="btn-icon" (click)="startRenameColumn(col, $event)">✏️</button>
+            <button type="button" class="btn-icon danger" (click)="deleteColumn(col.id, $event)">🗑️</button>
+          </div>
+        </ng-container>
+
+        <div *ngIf="editingColumnId === col.id" class="rename-form" (click)="$event.stopPropagation()">
+          <input 
+            type="text" 
+            [(ngModel)]="editingColumnTitle" 
+            class="form-control-sm" 
+            (keyup.enter)="saveRenameColumn(col.id)"
+            (keyup.escape)="cancelRenameColumn()" 
+            autofocus />
+          <button type="button" class="btn-sm" (click)="saveRenameColumn(col.id)">✓</button>
+          <button type="button" class="btn-sm" (click)="cancelRenameColumn()">✕</button>
+        </div>
+
       </div>
 
-      <!-- 🚀 cdkDropList: Görev kartlarının bırakılacağı alan -->
+      <!-- GÖREV LİSTESİ (Sürükleme Alanı) -->
       <div 
         class="tasks-list" 
         cdkDropList 
         [cdkDropListData]="col.tasks" 
         (cdkDropListDropped)="drop($event, col)">
         
-        <!-- 🚀 cdkDrag: Sürüklenebilir kart -->
-        <div class="task-card" *ngFor="let task of col.tasks" cdkDrag (click)="openTaskDetail(task)">
+        <!-- GÖREV KARTI -->
+        <div 
+          class="task-card" 
+          *ngFor="let task of col.tasks" 
+          cdkDrag 
+          (click)="openTaskDetail(task)">
+          
           <div class="task-title">{{ task.title }}</div>
+          
           <div class="task-footer">
-            <span class="badge" [class]="task.priority.toLowerCase()">{{ task.priority }}</span>
-            <span class="assignee" *ngIf="task.assigneeName">{{ task.assigneeName }}</span>
-            <!-- 📅 Son Tarih Gösterimi -->
-    <span class="due-date" *ngIf="task.dueDate">
-      📅 {{ task.dueDate | date:'dd MMM' }}
-    </span>
+            <span class="badge" [ngClass]="'priority-' + task.priority.toLowerCase()">
+              {{ task.priority }}
+            </span>
+
+            <div class="right-info">
+              <span 
+                *ngIf="task.dueDate" 
+                class="due-date" 
+                [class.overdue]="isOverdue(task.dueDate)">
+                📅 {{ task.dueDate | date:'dd MMM' }}
+              </span>
+
+              <div *ngIf="task.assigneeName" class="avatar">
+                {{ getInitials(task.assigneeName) }}
+              </div>
+            </div>
           </div>
+
         </div>
 
       </div>
 
+      <!-- HIZLI GÖREV EKLEME -->
       <div class="add-task-section">
         <button 
           *ngIf="activeColumnIdForNewTask !== col.id" 
@@ -64,28 +102,47 @@
             placeholder="Görev başlığı..." 
             (keyup.enter)="addTask(col)"
             autofocus />
-            <div class="form-group mb-2">
-      <select [(ngModel)]="newTaskPriority" class="form-control select-priority">
-        <option *ngFor="let priority of priorityOptions" [value]="priority">{{ priority }}</option>
-      </select>
-    </div>
+          
+          <select [(ngModel)]="newTaskPriority" class="select-priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
 
           <div class="form-actions">
-            <button class="btn-save" (click)="addTask(col)">Ekle</button>
-            <button class="btn-cancel" (click)="toggleNewTaskForm(col.id)">✕</button>
+            <button type="button" class="btn-save" (click)="addTask(col)">Ekle</button>
+            <button type="button" class="btn-cancel" (click)="toggleNewTaskForm(col.id)">✕</button>
           </div>
         </div>
       </div>
 
     </div>
+
+    <!-- YENİ KOLON EKLEME BUTONU -->
+    <div class="add-column-wrapper">
+      <button *ngIf="!isAddingColumn" class="btn-add-column" (click)="toggleAddColumnForm()">
+        + Kolon Ekle
+      </button>
+
+      <div *ngIf="isAddingColumn" class="add-column-card">
+        <input 
+          type="text" 
+          [(ngModel)]="newColumnTitle" 
+          placeholder="Kolon başlığı..." 
+          (keyup.enter)="addColumn()" 
+          autofocus />
+        <div class="form-actions">
+          <button type="button" class="btn-save" (click)="addColumn()">Ekle</button>
+          <button type="button" class="btn-cancel" (click)="toggleAddColumnForm()">İptal</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="empty-board-state" *ngIf="!boardData.columns || boardData.columns.length === 0">
-    <p>Bu projede henüz hiç kolon bulunmuyor.</p>
-  </div>
 </div>
 
-
+<!-- TASK DETAIL DIALOG -->
 <app-task-detail-dialog
   *ngIf="isDetailModalOpen && selectedTask"
   [task]="selectedTask"
