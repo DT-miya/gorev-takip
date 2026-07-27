@@ -1,6 +1,13 @@
 <div class="dashboard-container">
   <h1>Bana Atanan Görevler</h1>
 
+  <div class="filters">
+    <button mat-button (click)="setPriorityFilter('Tümü')">Tümü</button>
+    <button mat-button (click)="setPriorityFilter('High')">Yüksek</button>
+    <button mat-button (click)="setPriorityFilter('Medium')">Orta</button>
+    <button mat-button (click)="setPriorityFilter('Low')">Düşük</button>
+  </div>
+
   @if (loading()) {
     <p>Yükleniyor...</p>
   } @else if (tasks().length === 0) {
@@ -12,7 +19,7 @@
   </div>
 } @else {
     <div class="task-list">
-      @for (task of tasks(); track task.id) {
+      @for (task of filteredTasks(); track task.id) {
         <div class="task-item" (click)="openBoard(task.projectId)">
           <div class="task-main">
             <strong>{{ task.title }}</strong>

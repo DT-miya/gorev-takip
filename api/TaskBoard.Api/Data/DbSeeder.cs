@@ -11,6 +11,14 @@ public static class DbSeeder
         if (context.Users.Any())
             return;
 
+
+        var admin = new User
+        {
+            FullName = "admin",
+            Email = "admin@test.com",
+            Role = "Admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123")
+        };
         //user
         var ali = new User
         {
@@ -26,7 +34,7 @@ public static class DbSeeder
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!")
         };
 
-        context.Users.AddRange(ali, ayse);
+        context.Users.AddRange(ali, ayse, admin);
         context.SaveChanges();
 
         // proje

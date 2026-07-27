@@ -9,6 +9,7 @@ using TaskBoard.Api.Interfaces;
 using TaskBoard.Api.Services;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // TaskService
@@ -16,6 +17,8 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 
 //DashboardService
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // ColumnService
 builder.Services.AddScoped<IColumnService, ColumnService>();

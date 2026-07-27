@@ -8,4 +8,6 @@ public class User {
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<ProjectMember> Memberships { get; set; } = new();
+
+    public string Role { get; set;} = "User";
 }
