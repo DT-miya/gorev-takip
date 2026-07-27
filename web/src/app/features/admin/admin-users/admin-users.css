@@ -59,3 +59,17 @@
   background: #ede9fe;
   color: #7c3aed;
 }
+
+.role-toggle {
+  padding: 6px 14px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.role-toggle:hover {
+  background: #f1f5f9;
+}

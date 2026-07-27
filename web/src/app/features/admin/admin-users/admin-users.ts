@@ -28,4 +28,15 @@ export class AdminUsersComponent implements OnInit {
       }
     });
   }
+
+  toggleRole(user: AdminUser): void {
+    const newRole = user.role === 'Admin' ? 'User' : 'Admin';
+    this.adminService.updateUserRole(user.id, newRole).subscribe({
+      next: (users) => this.users.set(users),
+      error: (err) => {
+        console.error('Rol değiştirilemedi', err);
+        alert(err.error?.message || 'Rol değiştirilemedi');
+      }
+    });
+  }
 }

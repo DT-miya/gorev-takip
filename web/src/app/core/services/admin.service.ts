@@ -19,4 +19,8 @@ export class AdminService {
   getStats(): Observable<AdminStats> {
     return this.http.get<AdminStats>(`${this.apiUrl}/admin/stats`);
   }
+
+  updateUserRole(userId: number, role: string): Observable<AdminUser[]> {
+  return this.http.put<AdminUser[]>(`${this.apiUrl}/admin/users/${userId}/role`, { role });
+  }
 }

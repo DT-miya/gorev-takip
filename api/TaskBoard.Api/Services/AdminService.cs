@@ -20,7 +20,7 @@ public class AdminService : IAdminService
         return await _context.Users
             .Select(u => new UserDto
             {
-                AdminId = u.Id,
+                Id = u.Id,
                 FullName = u.FullName,
                 Email = u.Email,
                 Role = u.Role
