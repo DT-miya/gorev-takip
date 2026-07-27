@@ -26,4 +26,14 @@ public class AdminService : IAdminService
             })
             .ToListAsync();
     }
+
+    public async Task<StatsDto> GetStatsAsync()
+    {
+        return new StatsDto
+        {
+            UserCount = await _context.Users.CountAsync(),
+            ProjectCount = await _context.Projects.CountAsync(),
+            TaskCount = await _context.Tasks.CountAsync()
+        };
+    }
 }
