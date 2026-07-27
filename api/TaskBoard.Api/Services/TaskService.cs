@@ -78,43 +78,61 @@ namespace TaskBoard.Api.Services
 
         public async Task<bool> MoveAsync(int taskId, MoveTaskRequest request, int userId)
         {
-           var task = await _context.Tasks.FindAsync(taskId);
+        var task = await _context.Tasks.FindAsync(taskId);
     if (task == null) return false;
 
-    int oldColumnId = task.ColumnId;
-    int newColumnId = request.TargetColumnId;
+    int sourceColumnId = task.ColumnId;
+    int targetColumnId = request.TargetColumnId;
+    int newOrder = request.NewOrder;
 
-    // 1. Görevin yeni kolonunu ve sırasını güncelle
-    task.ColumnId = newColumnId;
-    task.Order = request.NewOrder;
-
-    // 2. Hedef kolondaki DİĞER tüm görevleri çek ve mevcut sıraya göre diz
-    var targetColumnTasks = await _context.Tasks
-        .Where(t => t.ColumnId == newColumnId && t.Id != taskId)
-        .OrderBy(t => t.Order)
-        .ToListAsync();
-
-    // 3. Taşınan görevi hedef listedeki istenen indekse (NewOrder - 1) araya ekle
-    int insertIndex = Math.Clamp(request.NewOrder - 1, 0, targetColumnTasks.Count);
-    targetColumnTasks.Insert(insertIndex, task);
-
-    // 4. Hedef kolondaki TÜM görevlerin Order değerlerini 1'den başlayarak sıralı biçimde yeniden yaz
-    for (int i = 0; i < targetColumnTasks.Count; i++)
+    // SENARYO 1: Farklı Kolona Aktarım Yapılıyor
+    if (sourceColumnId != targetColumnId)
     {
-        targetColumnTasks[i].Order = i + 1;
-    }
-
-    // 5. Eğer farklı bir kolondan geldiyse, eski kolondaki kalan görevlerin sıralamasını da temizle (1, 2, 3...)
-    if (oldColumnId != newColumnId)
-    {
-        var sourceColumnTasks = await _context.Tasks
-            .Where(t => t.ColumnId == oldColumnId && t.Id != taskId)
+        // A) Eski (Kaynak) kolondaki kalan görevleri çek ve sıralarını 1, 2, 3... diye yeniden düzenle
+        var sourceTasks = await _context.Tasks
+            .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
             .OrderBy(t => t.Order)
             .ToListAsync();
 
-        for (int i = 0; i < sourceColumnTasks.Count; i++)
+        for (int i = 0; i < sourceTasks.Count; i++)
         {
-            sourceColumnTasks[i].Order = i + 1;
+            sourceTasks[i].Order = i + 1;
+        }
+
+        // B) Taşınan görevin kolonunu ve geçici sırasını güncelle
+        task.ColumnId = targetColumnId;
+        task.Order = newOrder;
+
+        // C) Yeni (Hedef) kolondaki diğer tüm görevleri çek
+        var targetTasks = await _context.Tasks
+            .Where(t => t.ColumnId == targetColumnId && t.Id != taskId)
+            .OrderBy(t => t.Order)
+            .ToListAsync();
+
+        // D) Taşınan görevi yeni kolondaki hedeflenen indekse araya ekle
+        int insertIndex = Math.Clamp(newOrder - 1, 0, targetTasks.Count);
+        targetTasks.Insert(insertIndex, task);
+
+        // E) Hedef kolondaki tüm görevlerin Order değerini 1'den başlatarak sırayla yaz
+        for (int i = 0; i < targetTasks.Count; i++)
+        {
+            targetTasks[i].Order = i + 1;
+        }
+    }
+    // SENARYO 2: Aynı Kolon İçinde Yer Değiştiriliyor
+    else
+    {
+        var columnTasks = await _context.Tasks
+            .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
+            .OrderBy(t => t.Order)
+            .ToListAsync();
+
+        int insertIndex = Math.Clamp(newOrder - 1, 0, columnTasks.Count);
+        columnTasks.Insert(insertIndex, task);
+
+        for (int i = 0; i < columnTasks.Count; i++)
+        {
+            columnTasks[i].Order = i + 1;
         }
     }
 

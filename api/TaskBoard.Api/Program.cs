@@ -132,4 +132,24 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // Varsa bekleyen migration'ları otomatik uygular ve verileri basar
+         DbSeeder.Seed(context); 
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "DbSeeder çalışırken hata oluştu.");
+    }
+}
+
+
+
 app.Run();

@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
     {
       
         
-        return Ok(new { success = true, message = "��k�� yap�ld�." });
+        return Ok(new { success = true, message = "çıkış yapıldı." });
     }
 
 }

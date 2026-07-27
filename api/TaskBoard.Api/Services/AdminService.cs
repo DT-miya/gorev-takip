@@ -26,4 +26,47 @@ public class AdminService : IAdminService
             })
             .ToListAsync();
     }
+
+
+
+// 🚀 Proje Metotları
+    public async Task<List<ProjectDto>> GetAllProjectsAsync()
+    {
+        return await _context.Projects
+            .AsNoTracking()
+            .Include(p => p.Owner)
+            .Include(p => p.Columns)
+                .ThenInclude(c => c.Tasks)
+            .Include(p => p.Members)
+            .Select(p => new ProjectDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                CreatedAt = p.CreatedAt,
+                OwnerId = p.OwnerId,
+                OwnerName = p.Owner != null ? p.Owner.FullName : "Bilinmiyor",
+                OwnerEmail = p.Owner != null ? p.Owner.Email : "",
+                ColumnCount = p.Columns.Count,
+                TaskCount = p.Columns.SelectMany(c => c.Tasks).Count(),
+                MemberCount = p.Members.Count
+            })
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<bool> DeleteProjectAsync(int projectId)
+    {
+        var project = await _context.Projects.FindAsync(projectId);
+        if (project == null)
+            return false;
+
+        _context.Projects.Remove(project);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+
+
 }

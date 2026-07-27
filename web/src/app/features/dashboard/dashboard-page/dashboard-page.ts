@@ -1,8 +1,8 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DashboardService } from '../../../core/services/dashboard.service';
-import { AssignedTask } from '../../../core/models/dashboard.model';
+import { DashboardService } from '@services/dashboard.service';
+import { AssignedTask } from '@models/dashboard.model';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 
