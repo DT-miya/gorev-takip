@@ -10,3 +10,16 @@ export interface AdminStats {
     projectCount: number;
     taskCount: number;
 }
+
+export interface AdminProject {
+  id: number;
+  name: string;
+  description?: string;
+  createdAt: string;
+  ownerId: number;
+  ownerName: string;
+  ownerEmail: string;
+  columnCount: number;
+  taskCount: number;
+  memberCount: number;
+}
