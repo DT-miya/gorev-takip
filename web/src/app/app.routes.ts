@@ -6,8 +6,12 @@ import { ProjectListComponent } from './features/projects/project-list/project-l
 import { authGuard } from './core/guards/auth.guard';
 import { BoardViewComponent } from './features/board/pages/board-view.component';
 import { DashboardPage } from './features/dashboard/dashboard-page/dashboard-page';
+
 import { AdminStatsComponent } from './features/admin/admin-stats/admin-stats';
 import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
+
+import { adminGuard } from '@core/guards/admin.guard';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -36,6 +40,7 @@ export const routes: Routes = [
   path: 'dashboard',
   component: DashboardPage,
   canActivate: [authGuard]
+
   },
   
   {
@@ -48,5 +53,14 @@ export const routes: Routes = [
   component: AdminUsersComponent,
   canActivate: [authGuard]
 }
+
+  } ,
+
+  {
+    path: 'admin',
+    loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    canActivate: [adminGuard]
+  }
+
 
 ];

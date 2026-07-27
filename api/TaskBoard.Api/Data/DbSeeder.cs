@@ -10,15 +10,23 @@ public static class DbSeeder
         // Daha önce seed atıldıysa tekrar ekleme
         if (context.Users.Any())
             return;
+// 1. Admin Kontrolü: Admin yoksa ekle
+       
+            var admin = new User
+            {
+                FullName = "admin",
+                Email = "admin@test.com",
+                Role = "Admin",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123")
+            };
+
+            context.Users.Add(admin);
+            context.SaveChanges();
+       
 
 
-        var admin = new User
-        {
-            FullName = "admin",
-            Email = "admin@test.com",
-            Role = "Admin",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123")
-        };
+        
+
         //user
         var ali = new User
         {

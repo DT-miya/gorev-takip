@@ -10,6 +10,8 @@ import { ColumnService } from '@services/column.service';
 import { ProjectService } from '@services/project.service';
 import type { Member } from '@services/project.service';
 
+
+
 // 🚀 Dialog Component Import
 import { TaskDetailDialogComponent } from '../components/task-detail-dialog/task-detail-dialog';
 
@@ -98,35 +100,11 @@ export class BoardViewComponent implements OnInit {
     });
   }
 
-  // 🚀 KOLON SIRALAMA MANTIĞI (Tekil Metot)
-  dropColumn(event: CdkDragDrop<BoardColumn[]>): void {
-    if (!this.boardData || !this.boardData.columns) return;
-    if (event.previousIndex === event.currentIndex) return;
 
-    moveItemInArray(
-      this.boardData.columns, 
-      event.previousIndex, 
-      event.currentIndex
-    );
 
-    const reorderPayload = {
-      projectId: this.projectId,
-      orderedColumnIds: this.boardData.columns.map((col: any) => col.id)
-    };
-
-    this.columnService.reorderColumns(reorderPayload).subscribe({
-      error: (err: any) => {
-        console.error('Kolon sırası kaydedilemedi:', err);
-        this.loadBoard();
-      }
-    });
-
-    this.cdr.detectChanges();
-  }
-
-  // 🚀 GÖREV SÜRÜKLE - BIRAK MANTIĞI (Sıralama Kaybını Önleyen Versiyon)
+// 🚀 GÖREV SÜRÜKLE - BIRAK MANTIĞI (Kolonlar Arası & Kolon İçi Aktarım)
 drop(event: CdkDragDrop<TaskItem[]>, targetColumn: BoardColumn): void {
-  // 1. Aynı yere bırakıldıysa işlem yapma
+  // 1. Aynı kolonun aynı sırasına bırakıldıysa hiç işlem yapma
   if (
     event.previousContainer === event.container &&
     event.previousIndex === event.currentIndex
@@ -134,14 +112,16 @@ drop(event: CdkDragDrop<TaskItem[]>, targetColumn: BoardColumn): void {
     return;
   }
 
-  // 2. Frontend dizisini anlık olarak güncelle
+  // 2. Anlık UI Güncellemesi (Optimistic Update)
   if (event.previousContainer === event.container) {
+    // Aynı kolon içinde sıra değiştirme
     moveItemInArray(
       event.container.data, 
       event.previousIndex, 
       event.currentIndex
     );
   } else {
+    // Farklı kolona kart aktarma
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
@@ -150,31 +130,69 @@ drop(event: CdkDragDrop<TaskItem[]>, targetColumn: BoardColumn): void {
     );
   }
 
-  // 3. Taşınan görevi ve yeni sırasını tespit et
+  // 3. Hedef konumdaki taşınan görevi tespit et
   const movedTask = event.container.data[event.currentIndex];
   
-  // Backend sırası 1-based (1'den başlayan) kabul ediliyorsa + 1 ekliyoruz
-  const calculatedNewOrder = event.currentIndex + 1;
+  // Backend sırası 1-based (1'den başlayan) olduğu için +1 ekliyoruz
+  const newOrder = event.currentIndex + 1;
 
-  // 4. API İsteği
+  // 4. API İsteği Gönder
   this.taskService.moveTask(movedTask.id, {
     targetColumnId: targetColumn.id,
-    newOrder: calculatedNewOrder
+    newOrder: newOrder
   }).subscribe({
     next: () => {
-      // Başarılı olduğunda lokal objede de columnId ve order'ı güncelle
+      // Başarılı olduğunda lokal task objesindeki columnId ve order'ı senkronize et
       movedTask.columnId = targetColumn.id;
-      movedTask.order = calculatedNewOrder;
+      movedTask.order = newOrder;
     },
     error: (err: any) => {
-      console.error('Görev taşıma kaydedilemedi:', err);
-      // Hata durumunda eski sırayı korumak için panoyu yeniden yükle
+      console.error('Görev taşıma/aktarma kaydedilemedi:', err);
+      // Hata oluşursa arayüzü veritabanındaki gerçek durumuna geri döndür (Rollback)
       this.loadBoard();
     }
   });
 
   this.cdr.detectChanges();
 }
+
+// 🚀 KOLON SÜRÜKLE - BIRAK MANTIĞI
+dropColumn(event: CdkDragDrop<BoardColumn[]>): void {
+  // boardData veya columns yoksa ya da aynı sıraya bırakıldıysa işlem yapma
+  if (!this.boardData?.columns || event.previousIndex === event.currentIndex) {
+    return;
+  }
+
+  // 1. UI Güncellemesi (Optimistic Update)
+  moveItemInArray(
+    this.boardData.columns,
+    event.previousIndex,
+    event.currentIndex
+  );
+
+  // 2. Yeni kolon ID sıralaması
+  const columnIds = this.boardData.columns.map(c => c.id);
+
+  // 3. Proje ID'sini alıyoruz (boardData.projectId veya boardData.id)
+  const currentProjectId = this.boardData.projectId || (this.boardData as any).id;
+
+  // 4. Servisin beklediği payload objesini oluşturup gönderiyoruz
+  this.columnService.reorderColumns({
+    projectId: currentProjectId,
+    orderedColumnIds: columnIds
+  }).subscribe({
+    next: () => {
+      this.boardData?.columns.forEach((col, index) => col.order = index + 1);
+    },
+    error: (err: unknown) => {
+      console.error('Kolon sırası kaydedilemedi:', err);
+      this.loadBoard(); // Hata durumunda rollback
+    }
+  });
+
+  this.cdr.detectChanges();
+}
+
 
   // 🚀 KOLON EKLEME / DÜZENLEME / SİLME İŞLEMLERİ
   toggleAddColumnForm(): void {
