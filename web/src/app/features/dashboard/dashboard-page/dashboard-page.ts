@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
@@ -17,6 +17,20 @@ import { MatButtonModule } from '@angular/material/button';
 export class DashboardPage implements OnInit {
   tasks = signal<AssignedTask[]>([]);
   loading = signal(true);
+  
+  selectedPriority = signal<string>("Tümü");
+
+  filteredTasks = computed(() => {
+    const p = this.selectedPriority();
+    const all = this.tasks();
+    return p === "Tümü" ? all : all.filter(t => t.priority === p);
+  });
+
+  setPriorityFilter(priority: string): void {
+    this.selectedPriority.set(priority);
+  }
+
+
 
 
   constructor(
