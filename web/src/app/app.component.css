@@ -1,0 +1,53 @@
+mat-toolbar {
+  background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+  color: white;
+  padding: 0 32px;
+  height: 64px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-title {
+  font-weight: 700;
+  font-size: 20px;
+  margin-right: 24px;
+}
+
+.spacer { flex: 1 1 auto; }
+
+mat-toolbar a,
+mat-toolbar button {
+  color: white;
+  margin-left: 4px;
+}
+
+.app-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 20px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar a,
+mat-toolbar button {
+  margin-left: 4px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+mat-toolbar a:hover,
+mat-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.page-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
