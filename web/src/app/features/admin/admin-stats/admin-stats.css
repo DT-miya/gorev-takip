@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.stats-grid {
+  display: flex;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid #edf0f4;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* Her kartın üstünde renkli aksan çizgisi */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+}
+
+.stat-card:nth-child(1)::before {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+.stat-card:nth-child(2)::before {
+  background: linear-gradient(90deg, #11998e, #38ef7d);
+}
+.stat-card:nth-child(3)::before {
+  background: linear-gradient(90deg, #ee0979, #ff6a00);
+}
+
+.stat-number {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+  color: #1a2332;
+  letter-spacing: -1px;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 10px;
+  color: #8792a6;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}

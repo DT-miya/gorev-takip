@@ -9,10 +9,7 @@
 body {
   background-color: #f4f5f7;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   color: #334155;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }

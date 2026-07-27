@@ -1,0 +1,18 @@
+@if (loading()) {
+  <p>Yükleniyor...</p>
+} @else if (stats()) {
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ stats()!.userCount }}</div>
+      <div class="stat-label">Kullanıcı</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ stats()!.projectCount }}</div>
+      <div class="stat-label">Proje</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ stats()!.taskCount }}</div>
+      <div class="stat-label">Görev</div>
+    </div>
+  </div>
+}
