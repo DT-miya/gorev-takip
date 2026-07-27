@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '@services/admin.service';
-import type { AdminUser, AdminProject } from '@services/admin.service';
+import type { AdminUser, AdminProject } from '@models/admin.model';
 
 @Component({
   selector: 'app-admin-dashboard',

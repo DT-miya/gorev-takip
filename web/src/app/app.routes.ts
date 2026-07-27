@@ -52,9 +52,9 @@ export const routes: Routes = [
   path: 'admin-users-test',
   component: AdminUsersComponent,
   canActivate: [authGuard]
-}
+},
 
-  } ,
+  
 
   {
     path: 'admin',
