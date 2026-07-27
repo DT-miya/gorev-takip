@@ -1,0 +1,123 @@
+<div class="admin-container">
+  
+  <div class="admin-header">
+    <h1>Yönetim Paneli</h1>
+    <p>Sistemdeki tüm projeleri ve kullanıcıları buradan kontrol edebilirsiniz.</p>
+  </div>
+
+  <!-- 📊 İSTATİSTİK KARTLARI -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📁</div>
+      <div class="stat-info">
+        <h3>{{ projects.length }}</h3>
+        <span>Toplam Proje</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <h3>{{ users.length }}</h3>
+        <span>Toplam Kullanıcı</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">👑</div>
+      <div class="stat-info">
+        <h3>{{ adminCount }}</h3>
+        <span>Yönetici Sayısı</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB NAVİGASYON -->
+  <div class="tab-navigation">
+    <button 
+      [class.active]="activeTab === 'projects'" 
+      (click)="activeTab = 'projects'">
+      📁 Projeler Tablosu ({{ projects.length }})
+    </button>
+    <button 
+      [class.active]="activeTab === 'users'" 
+      (click)="activeTab = 'users'">
+      👥 Kullanıcılar Tablosu ({{ users.length }})
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Veriler yükleniyor...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <!-- 📁 PROJELER TABLOSU -->
+    <div class="table-card" *ngIf="activeTab === 'projects'">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Proje Adı</th>
+            <th>Açıklama</th>
+            <th>Proje Sahibi</th>
+            <th>Kolon / Görev</th>
+            <th>Üye Sayısı</th>
+            <th>Oluşturulma Tarihi</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let proj of projects">
+            <td class="font-bold">{{ proj.name }}</td>
+            <td class="desc-cell">{{ proj.description || '-' }}</td>
+            <td>
+              <div class="owner-badge">
+                <strong>{{ proj.ownerName }}</strong>
+                <small>{{ proj.ownerEmail }}</small>
+              </div>
+            </td>
+            <td>
+              <span class="count-badge">{{ proj.columnCount }} Kolon</span> /
+              <span class="count-badge light">{{ proj.taskCount }} Görev</span>
+            </td>
+            <td><span class="count-badge member">{{ proj.memberCount }} Üye</span></td>
+            <td>{{ proj.createdAt | date:'dd MMM yyyy' }}</td>
+            
+          </tr>
+          <tr *ngIf="projects.length === 0">
+            <td colspan="7" class="empty-cell">Henüz hiç proje oluşturulmamış.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 👥 KULLANICILAR TABLOSU -->
+    <div class="table-card" *ngIf="activeTab === 'users'">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ad Soyad</th>
+            <th>E-posta</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users">
+            <td>#{{ u.adminId }}</td>
+            <td class="font-bold">{{ u.fullName }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <span class="role-badge" [class.admin]="u.role === 'Admin'">
+                {{ u.role || 'User' }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="4" class="empty-cell">Sistemde kullanıcı bulunamadı.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+</div>

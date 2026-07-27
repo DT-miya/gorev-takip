@@ -2,32 +2,34 @@
   <p>Pano yükleniyor...</p>
 </div>
 
-<div class="board-container" *ngIf="!isLoading && boardData" cdkDropListGroup>
+<!-- 1. En dış div'den cdkDropListGroup'u kaldırdık -->
+<div class="board-container" *ngIf="!isLoading && boardData">
   
   <div class="board-header">
-    <h2>{{ boardData.projectName }}</h2>
+   <h2>{{ boardData.projectName }}</h2>
   </div>
 
-  <!-- KOLONLARIN YAN YANA DİZİLDİĞİ ANA ALAN -->
+  <!-- 2. cdkDropListGroup'u BURAYA (columns-wrapper) taşıdık -->
   <div 
     class="columns-wrapper" 
+    cdkDropListGroup
     cdkDropList 
     cdkDropListOrientation="horizontal"
     [cdkDropListData]="boardData.columns"
     (cdkDropListDropped)="dropColumn($event)">
 
-    <!-- KOLON KARTI -->
     <div 
       class="column-card" 
       *ngFor="let col of boardData.columns" 
-      cdkDrag>
+      cdkDrag 
+      [cdkDragData]="col">
 
-      <!-- Kolon Sürükleme Tutamağı ve Başlık -->
+      <!-- Kolon Başlığı -->
       <div class="column-header" cdkDragHandle>
-        
         <ng-container *ngIf="editingColumnId !== col.id">
           <h3>{{ col.title }} <span class="task-count">({{ col.tasks.length }})</span></h3>
-          <div class="column-actions">
+          
+          <div class="column-actions" (click)="$event.stopPropagation()">
             <button type="button" class="btn-icon" (click)="startRenameColumn(col, $event)">✏️</button>
             <button type="button" class="btn-icon danger" (click)="deleteColumn(col.id, $event)">🗑️</button>
           </div>
@@ -44,10 +46,9 @@
           <button type="button" class="btn-sm" (click)="saveRenameColumn(col.id)">✓</button>
           <button type="button" class="btn-sm" (click)="cancelRenameColumn()">✕</button>
         </div>
-
       </div>
 
-      <!-- GÖREV LİSTESİ (Sürükleme Alanı) -->
+      <!-- 🚀 GÖREV LİSTESİ (Sürükle-Bırak Alanı) -->
       <div 
         class="tasks-list" 
         cdkDropList 
@@ -59,6 +60,7 @@
           class="task-card" 
           *ngFor="let task of col.tasks" 
           cdkDrag 
+          [cdkDragData]="task"
           (click)="openTaskDetail(task)">
           
           <div class="task-title">{{ task.title }}</div>
@@ -87,7 +89,7 @@
       </div>
 
       <!-- HIZLI GÖREV EKLEME -->
-      <div class="add-task-section">
+      <div class="add-task-section" (click)="$event.stopPropagation()">
         <button 
           *ngIf="activeColumnIdForNewTask !== col.id" 
           class="btn-add-task" 
@@ -111,7 +113,7 @@
 
           <div class="form-actions">
             <button type="button" class="btn-save" (click)="addTask(col)">Ekle</button>
-            <button type="button" class="btn-cancel" (click)="toggleNewTaskForm(col.id)">✕</button>
+            <button type="button" class="btn-cancel" (click)="toggleNewTaskForm(col.id)">İptal</button>
           </div>
         </div>
       </div>
