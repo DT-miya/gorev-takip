@@ -1,42 +1,105 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AdminService } from '../../../core/services/admin.service';
 import { AdminUser } from '../../../core/models/admin.model';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css'
 })
 export class AdminUsersComponent implements OnInit {
-  users = signal<AdminUser[]>([]);
-  loading = signal(true);
+  users: AdminUser[] = [];
+  
+  // Sayfalandırma Değişkenleri
+  currentPage = 1;
+  pageSize = 20;
+  totalCount = 0;
+  totalPages = 1;
+  
+  // Filtreleme
+  searchTerm = '';
+  private searchSubject = new Subject<string>();
+  isLoading = false;
 
-  constructor(private adminService: AdminService) {}
+private adminService = inject(AdminService);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
-    this.adminService.getUsers().subscribe({
-      next: (data) => {
-        this.users.set(data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Kullanıcılar yüklenemedi', err);
-        this.loading.set(false);
-      }
+    this.loadUsers();
+
+    // Arama input'una debounce (gecikme) ekliyoruz
+    this.searchSubject.pipe(
+      debounceTime(300),          // Kullanıcı yazmayı bıraktıktan 300ms sonra tetiklenir
+      distinctUntilChanged()      // Aynı değer girildiyse tekrar istek atmaz
+    ).subscribe(search => {
+      this.searchTerm = search;
+      this.currentPage = 1;      // Yeni aramada 1. sayfaya dön
+      this.loadUsers();
     });
   }
 
   toggleRole(user: AdminUser): void {
     const newRole = user.role === 'Admin' ? 'User' : 'Admin';
     this.adminService.updateUserRole(user.id, newRole).subscribe({
-      next: (users) => this.users.set(users),
+      next: (updatedUser: AdminUser) => {
+      // 1. Dizideki ilgili kullanıcının verilerini lokal olarak güncelle
+      this.users = this.users.map(u => 
+        u.id === updatedUser.id ? { ...u, role: updatedUser.role } : u
+      );
+      this.cdr.detectChanges();
+      },
       error: (err) => {
         console.error('Rol değiştirilemedi', err);
-        alert(err.error?.message || 'Rol değiştirilemedi');
+       
       }
     });
   }
+
+onSearchChange(searchValue: string): void {
+    this.searchSubject.next(searchValue);
+  }
+
+  loadUsers(): void {
+    this.isLoading = true;
+    this.adminService.getUsers(this.searchTerm, this.currentPage, this.pageSize).subscribe({
+      next: (result) => {
+        this.users = result.items;
+        this.totalCount = result.totalCount;
+        this.totalPages = result.totalPages;
+        this.isLoading = false;
+
+        // Arayüzün güncellendiğinden emin oluyoruz
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Kullanıcılar yüklenemedi:', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadUsers();
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadUsers();
+    }
+  }
+
+
+
+
+
 }

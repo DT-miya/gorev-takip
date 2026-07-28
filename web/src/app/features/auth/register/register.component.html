@@ -2,6 +2,9 @@
   <h2>Kayıt Ol</h2>
   <p class="subtitle">Yeni Hesap Oluşturun</p>
 
+  <div *ngIf="successMessage" class="success-alert">
+    {{ successMessage }}
+  </div>
   <div *ngIf="errorMessage" class="error-alert">
     {{ errorMessage }}
   </div>

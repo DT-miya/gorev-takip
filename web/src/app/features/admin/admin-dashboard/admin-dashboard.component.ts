@@ -32,7 +32,7 @@ export class AdminDashboardComponent implements OnInit {
     // Kullanıcıları ve projeleri çekiyoruz
     this.adminService.getUsers().subscribe({
       next: (users) => {
-        this.users = users;
+        this.users = users.items;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Kullanıcılar yüklenemedi:', err)

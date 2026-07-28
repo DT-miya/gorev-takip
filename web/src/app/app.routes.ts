@@ -13,7 +13,6 @@ import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
 import { adminGuard } from '@core/guards/admin.guard';
 import { AdminProjects } from '@features/admin-projects/admin-projects';
 
-
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -22,13 +21,13 @@ export const routes: Routes = [
   { 
     path: 'taskboard', 
     component: TaskboardComponent, 
-    canActivate: [authGuard] // Guard burada devreye giriyor
+    canActivate: [authGuard] 
   },
 
   {
     path: 'projects/:id/board', 
     component: BoardViewComponent,
-    canActivate: [authGuard] // Guard burada devreye giriyor
+    canActivate: [authGuard] 
   },
   
   {
@@ -38,35 +37,34 @@ export const routes: Routes = [
   },
 
   {
-  path: 'dashboard',
-  component: DashboardPage,
-  canActivate: [authGuard]
-
+    path: 'dashboard',
+    component: DashboardPage,
+    canActivate: [authGuard]
   },
   
-{
-  path: 'admin-stats',
-  component: AdminStatsComponent,
-  canActivate: [adminGuard]
-},
-{
-  path: 'admin-users',
-  component: AdminUsersComponent,
-  canActivate: [adminGuard]
-},
-{
-  path: 'admin-projects',
-  component: AdminProjects,
-  canActivate: [adminGuard]
-},
-
-  
-
-{
-  path: 'admin',
-  loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-  canActivate: [adminGuard]
-}
-
-
+  {
+    path: 'admin-stats',
+    component: AdminStatsComponent,
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin-users',
+    component: AdminUsersComponent,
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin-projects',
+    component: AdminProjects,
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'admin-logs',
+    loadComponent: () => import('@features/admin/admin-logs/admin-logs').then(m => m.AdminLogsComponent),
+    canActivate: [adminGuard]
+  }
 ];
