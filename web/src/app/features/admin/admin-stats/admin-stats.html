@@ -1,18 +1,74 @@
-@if (loading()) {
-  <p>Yükleniyor...</p>
-} @else if (stats()) {
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-number">{{ stats()!.userCount }}</div>
-      <div class="stat-label">Kullanıcı</div>
+<section class="stats-page">
+  <header class="stats-header">
+    <div>
+      <h1>İstatistikler</h1>
+      <p>Sistemin genel durumunu hızlıca görüntüleyin</p>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ stats()!.projectCount }}</div>
-      <div class="stat-label">Proje</div>
+  </header>
+
+  @if (loading()) {
+    <div class="state-box">Yükleniyor...</div>
+  } @else if (stats()) {
+    <div class="stats-grid">
+      <article class="stat-card users">
+        <div class="stat-top">
+          <span class="stat-icon">K</span>
+          <span class="stat-kicker">Toplam</span>
+        </div>
+        <div class="stat-number">{{ stats()!.userCount }}</div>
+        <div class="stat-label">Kullanıcı</div>
+      </article>
+
+      <article class="stat-card projects">
+        <div class="stat-top">
+          <span class="stat-icon">P</span>
+          <span class="stat-kicker">Aktif</span>
+        </div>
+        <div class="stat-number">{{ stats()!.projectCount }}</div>
+        <div class="stat-label">Proje</div>
+      </article>
+
+      <article class="stat-card tasks">
+        <div class="stat-top">
+          <span class="stat-icon">G</span>
+          <span class="stat-kicker">Kayıtlı</span>
+        </div>
+        <div class="stat-number">{{ stats()!.taskCount }}</div>
+        <div class="stat-label">Görev</div>
+      </article>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ stats()!.taskCount }}</div>
-      <div class="stat-label">Görev</div>
-    </div>
+  } @else {
+    <div class="state-box">İstatistik bulunamadı.</div>
+  }
+
+  @if (message()) {
+  <div class="state-box">{{ message() }}</div>
+}
+
+@if (selectedTab() === 'tasks') {
+  <div class="state-box">
+    <h3>Görevler</h3>
+    @for (column of taskData(); track column.id) {
+      <div>
+        <strong>{{ column.title }}</strong>
+        <ul>
+          @for (task of column.tasks; track task.id) {
+            <li>{{ task.title }}</li>
+          }
+        </ul>
+      </div>
+    }
   </div>
 }
+
+@if (selectedTab() === 'members') {
+  <div class="state-box">
+    <h3>Üyeler</h3>
+    <ul>
+      @for (member of memberData(); track member.userId) {
+        <li>{{ member.fullName }} - {{ member.email }}</li>
+      }
+    </ul>
+  </div>
+}
+</section>

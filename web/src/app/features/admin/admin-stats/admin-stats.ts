@@ -14,6 +14,11 @@ export class AdminStatsComponent implements OnInit {
   stats = signal<AdminStats | null>(null);
   loading = signal(true);
 
+  message = signal<string | null>(null);
+  selectedTab = signal<'tasks' | 'members' | null>(null);
+  taskData = signal<any[]>([]);
+  memberData = signal<any[]>([]);
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {

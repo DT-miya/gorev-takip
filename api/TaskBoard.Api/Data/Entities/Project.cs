@@ -11,4 +11,6 @@ public class Project
     public User Owner {get; set; } = null!;
     public List<ProjectMember> Members { get; set;} = new();
     public List<BoardColumn> Columns {get; set;} = new();
+
+    public bool IsArchived { get; set; } = false;
 }
