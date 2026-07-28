@@ -12,6 +12,9 @@ using TaskBoard.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ActiviyLogService
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
+
 // TaskService
 builder.Services.AddScoped<ITaskService, TaskService>();
 
@@ -149,6 +152,8 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "DbSeeder çalışırken hata oluştu.");
     }
 }
+
+
 
 
 

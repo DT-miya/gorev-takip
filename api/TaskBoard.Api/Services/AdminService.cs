@@ -1,23 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TaskBoard.Api.Data;
 using TaskBoard.Api.DTOs.Admin;
 using TaskBoard.Api.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using TaskBoard.Api.Exceptions;
+using TaskBoard.Api.Extensions;
 
 namespace TaskBoard.Api.Services;
 
 public class AdminService : IAdminService
 {
     private readonly AppDbContext _context;
+    private readonly IActivityLogService _logService;
 
-    public AdminService(AppDbContext context)
+    public AdminService(AppDbContext context, IActivityLogService logService)
     {
         _context = context;
+        _logService = logService;
     }
 
-    public async Task<List<UserDto>> GetAllUsersAsync()
+    // 1. Sayfalanmış ve Filtreli Kullanıcı Listesi
+    public async Task<PagedResult<UserDto>> GetAllUsersAsync(UserFilterParametersDto parameters)
     {
-        return await _context.Users
+        var query = _context.Users.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(parameters.Search))
+        {
+            var searchTerm = parameters.Search.Trim().ToLower();
+            query = query.Where(u => u.Email.ToLower().Contains(searchTerm) || 
+                                     u.FullName.ToLower().Contains(searchTerm));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(u => u.Id)
+            .Skip((parameters.Page - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -26,8 +48,15 @@ public class AdminService : IAdminService
                 Role = u.Role
             })
             .ToListAsync();
-    }
 
+        return new PagedResult<UserDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            Page = parameters.Page,
+            PageSize = parameters.PageSize
+        };
+    }
 
     public async Task<StatsDto> GetStatsAsync()
     {
@@ -39,27 +68,33 @@ public class AdminService : IAdminService
         };
     }
 
-    public async Task<List<UserDto>> UpdateUserRoleAsync(int userId, string newRole, int currentAdminId)
-{
-    if (newRole != "Admin" && newRole != "User")
-        throw new ConflictException("Geçersiz rol");
+    // 2. Kullanıcı Rolü Güncelleme (DTO Tabanlı Log Çağrısı)
+    public async Task<UserDto> UpdateUserRoleAsync(int userId, string newRole, int currentAdminId, string currentAdminName)
+    {
+        if (newRole != "Admin" && newRole != "User")
+            throw new ConflictException("Geçersiz rol");
 
-    if (userId == currentAdminId)
-        throw new ConflictException("Kendi rolünüzü değiştiremezsiniz");
+        if (userId == currentAdminId)
+            throw new ConflictException("Kendi rolünüzü değiştiremezsiniz");
 
-    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-    if (user == null)
-        throw new NotFoundException("Kullanıcı bulunamadı");
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+            throw new NotFoundException("Kullanıcı bulunamadı");
 
-    user.Role = newRole;
-    await _context.SaveChangesAsync();
+        user.Role = newRole;
+        await _context.SaveChangesAsync();
 
-    return await GetAllUsersAsync();
-}
+       
+        return new UserDto
+        {
+            Id = user.Id,
+            FullName = user.FullName,
+            Email = user.Email,
+            Role = user.Role
+        };
+    }
 
-
-
-// 🚀 Proje Metotları
+    // 3. Proje Metotları
     public async Task<List<ProjectDto>> GetAllProjectsAsync()
     {
         return await _context.Projects
@@ -93,11 +128,14 @@ public class AdminService : IAdminService
 
         _context.Projects.Remove(project);
         await _context.SaveChangesAsync();
+
+         
+
         return true;
     }
 
-
-
-
-
+    public Task<bool> DeleteProjectAsync(int projectId, int currentAdminId, string currentAdminName)
+    {
+        throw new NotImplementedException();
+    }
 }

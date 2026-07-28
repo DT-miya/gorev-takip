@@ -13,7 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
     public DbSet<BoardColumn> BoardColumns => Set<BoardColumn>();
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
-
+    public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(e =>

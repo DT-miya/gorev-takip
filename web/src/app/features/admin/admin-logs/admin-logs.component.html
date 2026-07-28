@@ -1,0 +1,84 @@
+<div class="logs-container">
+  
+  <div class="header-actions">
+    <h2>📋 Sistem İşlem Logları </h2>
+    
+    <!-- 🔍 ARAMA KUTUSU -->
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Kullanıcı, işlem veya açıklama ara..." 
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+        class="form-control" />
+    </div>
+    
+    
+    <button type="button" class="btn-refresh" (click)="loadLogs()" [disabled]="isLoading">
+      🔄 Yenile
+    </button>
+  </div>
+
+  <!-- YÜKLENİYOR DURUMU -->
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Loglar yükleniyor...</p>
+  </div>
+
+  <!-- ZAMAN TÜNELİ (TIMELINE) -->
+  <div class="timeline" *ngIf="!isLoading">
+    @for (log of logs; track log.id) {
+      <div class="log-card">
+        <div class="log-time">
+          📅 {{ log.createdAt | date:'dd.MM.yyyy HH:mm:ss' }}
+        </div>
+        
+        <div class="log-badge" [ngClass]="getActionClass(log.action)">
+          {{ log.action }}
+        </div>
+
+        <div class="log-description">
+          {{ log.description }}
+        </div>
+         <div class="log-ip">
+          {{ log.ipAddress }}
+        </div>
+
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>Henüz sistemde kaydedilmiş bir işlem logu bulunmuyor.</p>
+      </div>
+    }
+  </div>
+
+  <!-- SAYFALANDIRMA (PAGINATION) -->
+  <div class="pagination-bar" *ngIf="totalPages > 0 && !isLoading">
+    <span class="info-text">
+      Toplam <strong>{{ totalCount }}</strong> kayıttan 
+      {{ (currentPage - 1) * pageSize + 1 }} - 
+      {{ currentPage * pageSize > totalCount ? totalCount : currentPage * pageSize }} 
+      arası gösteriliyor.
+    </span>
+
+    <div class="page-buttons">
+      <button 
+        type="button" 
+        class="btn-page" 
+        [disabled]="currentPage === 1" 
+        (click)="prevPage()">
+        ◀ Önceki
+      </button>
+      
+      <span class="page-indicator">Sayfa {{ currentPage }} / {{ totalPages }}</span>
+
+      <button 
+        type="button" 
+        class="btn-page" 
+        [disabled]="currentPage === totalPages" 
+        (click)="nextPage()">
+        Sonraki ▶
+      </button>
+    </div>
+  </div>
+
+</div>

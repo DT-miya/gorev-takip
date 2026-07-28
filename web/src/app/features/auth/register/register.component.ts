@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -14,28 +14,36 @@ import { AuthService, RegisterRequest } from '@services/auth.service';
 export class RegisterComponent {
   model: RegisterRequest = { fullName: '', email: '', password: '' };
   errorMessage: string = '';
+  successMessage: string = '';
   isLoading: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router,  private cdr: ChangeDetectorRef) {}
 
   onRegister(): void {
     if (!this.model.fullName || !this.model.email || !this.model.password) {
       this.errorMessage = 'Lütfen tüm alaları doldurun.';
+      this.cdr.detectChanges();
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     this.authService.register(this.model).subscribe({
-      next: () => {
+      next: (res) => {
         this.isLoading = false;
-        alert('Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz.');
+        this.errorMessage = '';
+        this.successMessage = 'Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...'
+        this.cdr.detectChanges();
+        setTimeout(() => {
         this.router.navigate(['/login']);
+        }, 3000);
       },
       error: (err: any) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Kayıt olunamadı.';
+        this.cdr.detectChanges();
       }
     });
   }

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TaskBoard.Api.Data;       // AppDbContext ve Entities burada yer al�yor
+using TaskBoard.Api.Data;       // AppDbContext ve Entities burada yer alıyor
 using TaskBoard.Api.DTOs.Auth;
 using TaskBoard.Api.Interfaces;
 using TaskBoard.Api.Data.Entities;
@@ -27,7 +27,7 @@ public class AuthService : IAuthService
         var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser != null)
         {
-            return new AuthResponse { Success = false, Message = "Bu e-posta adresi zaten kullan�mda." };
+            return new AuthResponse { Success = false, Message = "Bu e-posta adresi zaten kullanımda." };
         }
 
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

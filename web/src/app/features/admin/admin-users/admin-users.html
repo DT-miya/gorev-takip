@@ -1,6 +1,12 @@
-@if (loading()) {
-  <p>Yükleniyor...</p>
-} @else {
+<div class="search-box">
+      <input 
+        type="text" 
+        placeholder="E-posta veya isim ile ara..." 
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+        class="form-control" />
+    </div>
+
   <table class="users-table">
     <thead>
       <tr>
@@ -12,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (user of users(); track user.id) {
+      @for (user of users; track user.id) {
         <tr>
           <td>{{ user.id }}</td>
           <td>{{ user.fullName }}</td>
@@ -31,4 +37,35 @@
       }
     </tbody>
   </table>
-}
+
+<!-- 📑 SAYFALANDIRMA (PAGINATION) KONTROLLERİ -->
+  <div class="pagination-bar" *ngIf="totalPages > 0">
+    <span class="info-text">
+      Toplam <strong>{{ totalCount }}</strong> kayıttan {{ (currentPage - 1) * pageSize + 1 }} - {{ currentPage * pageSize > totalCount ? totalCount : currentPage * pageSize }} arası gösteriliyor.
+    </span>
+
+    <div class="page-buttons">
+      <button 
+        type="button" 
+        class="btn-page" 
+        [disabled]="currentPage === 1" 
+        (click)="prevPage()">
+        ◀ Önceki
+      </button>
+      
+      <span class="page-indicator">Sayfa {{ currentPage }} / {{ totalPages }}</span>
+
+      <button 
+        type="button" 
+        class="btn-page" 
+        [disabled]="currentPage === totalPages || totalPages === 0" 
+        (click)="nextPage()">
+        Sonraki ▶
+      </button>
+    </div>
+  </div>
+
+
+
+
+
