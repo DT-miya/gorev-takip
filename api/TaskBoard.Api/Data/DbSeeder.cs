@@ -20,8 +20,7 @@ public static class DbSeeder
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123")
             };
 
-            context.Users.Add(admin);
-            context.SaveChanges();
+            
        
 
 

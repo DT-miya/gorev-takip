@@ -11,8 +11,8 @@ using TaskBoard.Api.Data;
 namespace TaskBoard.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260727065924_AddUserRole")]
-    partial class AddUserRole
+    [Migration("20260728125513_AddIsArchivedToProject")]
+    partial class AddIsArchivedToProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,9 @@ namespace TaskBoard.Api.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()

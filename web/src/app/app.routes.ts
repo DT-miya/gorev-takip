@@ -11,6 +11,7 @@ import { AdminStatsComponent } from './features/admin/admin-stats/admin-stats';
 import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
 
 import { adminGuard } from '@core/guards/admin.guard';
+import { AdminProjects } from '@features/admin-projects/admin-projects';
 
 
 export const routes: Routes = [
@@ -43,24 +44,29 @@ export const routes: Routes = [
 
   },
   
-  {
-  path: 'admin-test',
+{
+  path: 'admin-stats',
   component: AdminStatsComponent,
-  canActivate: [authGuard]
+  canActivate: [adminGuard]
 },
 {
-  path: 'admin-users-test',
+  path: 'admin-users',
   component: AdminUsersComponent,
-  canActivate: [authGuard]
+  canActivate: [adminGuard]
+},
+{
+  path: 'admin-projects',
+  component: AdminProjects,
+  canActivate: [adminGuard]
 },
 
   
 
-  {
-    path: 'admin',
-    loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-    canActivate: [adminGuard]
-  }
+{
+  path: 'admin',
+  loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+  canActivate: [adminGuard]
+}
 
 
 ];

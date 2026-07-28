@@ -35,13 +35,13 @@ import { AuthService } from '@services/auth.service';
           <a mat-button routerLink="/admin" routerLinkActive="active">
             📊 Admin Dashboard
           </a>
-          <a mat-button routerLink="/admin/projects" routerLinkActive="active">
+          <a mat-button routerLink="/admin-projects" routerLinkActive="active">
             📁 Projeler
           </a>
-          <a mat-button routerLink="/admin/users" routerLinkActive="active">
+          <a mat-button routerLink="/admin-users" routerLinkActive="active">
             👥 Kullanıcılar
           </a>
-          <a mat-button routerLink="/admin/stats" routerLinkActive="active">
+          <a mat-button routerLink="/admin-stats" routerLinkActive="active">
             📈 İstatistikler
           </a>
 

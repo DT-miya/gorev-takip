@@ -2,30 +2,55 @@
   display: block;
 }
 
-.stats-grid {
+.stats-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.stats-header {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.stats-header h1 {
+  margin: 0 0 6px;
+  color: #111827;
+  font-size: 28px;
+  font-weight: 750;
+}
+
+.stats-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.stats-grid {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: 16px;
 }
 
 .stat-card {
   position: relative;
   background: #ffffff;
-  border-radius: 16px;
-  padding: 28px;
+  border-radius: 8px;
+  padding: 22px;
   overflow: hidden;
-  border: 1px solid #edf0f4;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
 }
 
-/* Her kartın üstünde renkli aksan çizgisi */
 .stat-card::before {
   content: '';
   position: absolute;
@@ -35,29 +60,96 @@
   height: 5px;
 }
 
-.stat-card:nth-child(1)::before {
-  background: linear-gradient(90deg, #667eea, #764ba2);
+.stat-card.users::before {
+  background: #2563eb;
 }
-.stat-card:nth-child(2)::before {
-  background: linear-gradient(90deg, #11998e, #38ef7d);
+
+.stat-card.projects::before {
+  background: #059669;
 }
-.stat-card:nth-child(3)::before {
-  background: linear-gradient(90deg, #ee0979, #ff6a00);
+
+.stat-card.tasks::before {
+  background: #d97706;
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.stat-icon {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.users .stat-icon {
+  background: #2563eb;
+}
+
+.projects .stat-icon {
+  background: #059669;
+}
+
+.tasks .stat-icon {
+  background: #d97706;
+}
+
+.stat-kicker {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .stat-number {
-  font-size: 48px;
+  color: #0f172a;
+  font-size: 46px;
   font-weight: 800;
   line-height: 1;
-  color: #1a2332;
-  letter-spacing: -1px;
 }
 
 .stat-label {
-  font-size: 13px;
+  margin-top: 8px;
+  color: #475569;
+  font-size: 15px;
   font-weight: 600;
-  margin-top: 10px;
-  color: #8792a6;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+}
+
+.state-box {
+  padding: 28px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+@media (max-width: 640px) {
+  .stats-page {
+    padding: 16px;
+  }
+
+  .stats-header h1 {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    padding: 18px;
+  }
+
+  .stat-number {
+    font-size: 38px;
+  }
 }

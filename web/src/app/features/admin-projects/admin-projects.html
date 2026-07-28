@@ -1,0 +1,150 @@
+<section class="admin-projects-page">
+  <header class="page-header">
+    <div>
+      <h1>Projeler</h1>
+      <p>Sistemdeki projeleri filtreleyip 20'şer görüntüleyin</p>
+    </div>
+    <span class="project-count">{{ totalCount() }} proje</span>
+  </header>
+
+  <div class="view-toggle">
+    <button type="button" [class.active]="!showArchived()" (click)="showArchived() && toggleArchivedView()">
+      Aktif Projeler
+    </button>
+    <button type="button" [class.active]="showArchived()" (click)="!showArchived() && toggleArchivedView()">
+      Arşivlenmiş
+    </button>
+  </div>
+
+  <div class="filters">
+    <label>
+      <span>Proje adı</span>
+      <input type="text" placeholder="Ada göre ara" [value]="searchTerm()" (input)="setSearchTerm($any($event.target).value)">
+    </label>
+    <label>
+      <span>Min kolon</span>
+      <input type="number" min="0" placeholder="0" (input)="setMinColumns($any($event.target).value)">
+    </label>
+    <label>
+      <span>Min görev</span>
+      <input type="number" min="0" placeholder="0" (input)="setMinTasks($any($event.target).value)">
+    </label>
+    <label>
+      <span>Min üye</span>
+      <input type="number" min="0" placeholder="0" (input)="setMinMembers($any($event.target).value)">
+    </label>
+  </div>
+
+  @if (loading()) {
+    <div class="state-box">Projeler yükleniyor...</div>
+  } @else if (error()) {
+    <div class="state-box error">{{ error() }}</div>
+  } @else {
+    @if (projects().length === 0) {
+      <div class="state-box">Filtreye uygun proje bulunamadı.</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="projects-table">
+          <thead>
+            <tr>
+              <th>Proje Adı</th>
+              <th>Açıklama</th>
+              <th>Proje Sahibi</th>
+              <th>Kolon</th>
+              <th>Görev</th>
+              <th>Üye</th>
+              <th>Oluşturulma</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (project of projects(); track project.id) {
+              <tr>
+                <td class="project-name">{{ project.name }}</td>
+                <td class="description">{{ project.description || '-' }}</td>
+                <td>
+                  <div class="owner">
+                    <strong>{{ project.ownerName || 'Bilinmiyor' }}</strong>
+                    <span>{{ project.ownerEmail || '-' }}</span>
+                  </div>
+                </td>
+                <td><span class="count-badge">{{ project.columnCount }}</span></td>
+                <td><span class="count-badge task">{{ project.taskCount }}</span></td>
+                <td><span class="count-badge member">{{ project.memberCount }}</span></td>
+                <td>{{ project.createdAt | date:'dd MMM yyyy HH:mm' }}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button type="button" class="action-button primary" (click)="openProjectTasks(project.id)">
+                      Görevleri Gör
+                    </button>
+                    <button type="button" class="action-button" (click)="openProjectMembers(project.id)">
+                      Üyeler
+                    </button>
+                    @if (showArchived()) {
+                      <button type="button" class="action-button success" (click)="unarchiveProject(project.id)">
+                        Geri Getir
+                      </button>
+                    } @else {
+                      <button type="button" class="action-button warning" (click)="archiveProject(project.id)">
+                        Arşivle
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button type="button" (click)="previousPage()" [disabled]="currentPage() === 1">Önceki</button>
+        <span>Sayfa {{ currentPage() }} / {{ totalPages() }}</span>
+        <button type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Sonraki</button>
+      </div>
+
+      @if (message()) {
+        <div class="state-box">{{ message() }}</div>
+      }
+
+      @if (selectedTab()) {
+        <div class="modal-overlay" (click)="closeModal()">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <button class="modal-close" (click)="closeModal()">✕</button>
+
+            @if (selectedTab() === 'tasks') {
+              <h3>Görevler</h3>
+              @if (taskData().length === 0) {
+                <p>Bu projede görev bulunmuyor.</p>
+              } @else {
+                @for (column of taskData(); track column.id) {
+                  <div class="task-column">
+                    <strong>{{ column.title }}</strong>
+                    <ul>
+                      @for (task of column.tasks; track task.id) {
+                        <li>{{ task.title }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              }
+            }
+
+            @if (selectedTab() === 'members') {
+              <h3>Üyeler</h3>
+              @if (memberData().length === 0) {
+                <p>Bu projede üye bulunmuyor.</p>
+              } @else {
+                <ul>
+                  @for (member of memberData(); track member.userId) {
+                    <li>{{ member.fullName }} - {{ member.email }}</li>
+                  }
+                </ul>
+              }
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</section>

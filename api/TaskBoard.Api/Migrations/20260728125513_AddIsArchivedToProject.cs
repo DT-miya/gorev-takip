@@ -5,7 +5,7 @@
 namespace TaskBoard.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserRole : Migration
+    public partial class AddIsArchivedToProject : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,6 +16,13 @@ namespace TaskBoard.Api.Migrations
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsArchived",
+                table: "Projects",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: false);
         }
 
         /// <inheritdoc />
@@ -24,6 +31,10 @@ namespace TaskBoard.Api.Migrations
             migrationBuilder.DropColumn(
                 name: "Role",
                 table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "IsArchived",
+                table: "Projects");
         }
     }
 }
