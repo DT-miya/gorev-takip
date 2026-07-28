@@ -45,6 +45,10 @@ import { AuthService } from '@services/auth.service';
             📈 İstatistikler
           </a>
 
+          <a mat-button routerLink="/admin-logs" routerLinkActive="active">
+            ⓘ İşlem Logları
+          </a>
+
           <span class="divider">|</span>
           <a mat-button routerLink="/dashboard" class="back-link">
             ↩️ Uygulamaya Dön

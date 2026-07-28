@@ -1,0 +1,157 @@
+.logs-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-refresh {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Timeline Görünümü */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.log-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border-radius: 8px;
+  border-left: 4px solid #64748b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.log-time {
+  font-size: 0.85rem;
+  color: #64748b;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.log-badge {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Renk Sınıfları */
+.action-role {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.action-project {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.action-task {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.action-user {
+  background: #fef2f2;
+  color: #32e42f;
+}
+
+.action-user-project {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.action-user-project-member {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+
+
+.action-default {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.log-description {
+  font-size: 0.95rem;
+  color: #1e293b;
+  flex-grow: 1;
+}
+
+.log-ip {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+/* Pagination Bar */
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-page {
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 4px;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 350px;
+  margin: 0 16px;
+}
+
+.search-box .form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-box .form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}

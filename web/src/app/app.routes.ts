@@ -60,6 +60,12 @@ export const routes: Routes = [
     path: 'admin',
     loadComponent: () => import('@features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
     canActivate: [adminGuard]
+  },
+
+  {
+    path: 'admin-logs',
+    loadComponent: () => import('@features/admin/admin-logs/admin-logs').then(m => m.AdminLogsComponent),
+    canActivate: [adminGuard]
   }
 
 
