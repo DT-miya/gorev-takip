@@ -9,7 +9,7 @@ import { AuthService } from '@services/auth.service';
   standalone: true,
   imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule],
   template: `
-   @if (authService.isLoggedIn()) {
+    @if (authService.isLoggedIn()) {
       <mat-toolbar [class.admin-toolbar]="isAdminArea()">
         <span class="app-title">
           {{ isAdminArea() ? 'TaskBoard Admin' : 'Görev Takip' }}
@@ -31,7 +31,7 @@ import { AuthService } from '@services/auth.service';
           }
         }
 
-        <!--  ADMİN MENÜSÜ (Sadece /admin rotası ve altındayken) -->
+        <!-- 🟡 ADMİN MENÜSÜ (Sadece /admin rotası ve altındayken) -->
         @if (isAdminArea()) {
           <a mat-button routerLink="/admin" routerLinkActive="active">
             <i class="fas fa-home"></i> Admin Anasayfa
@@ -60,15 +60,15 @@ import { AuthService } from '@services/auth.service';
           <i class="fas fa-sign-out-alt"></i> Çıkış
         </button>
       </mat-toolbar>
-    }
 
-    <div class="page-content">
+      <!-- Giriş Yapmış Kullanıcılar İçin Sayfa Kapsayıcısı -->
+      <div class="page-content">
+        <router-outlet></router-outlet>
+      </div>
+    } @else {
+      <!-- Giriş Yapmamış (Login/Register) Kullanıcılar İçin Doğrudan Gösterim -->
       <router-outlet></router-outlet>
-    </div>
-
-
-    <router-outlet></router-outlet>
-
+    }
   `,
   styleUrl: './app.component.css'
 })

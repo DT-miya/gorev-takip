@@ -21,6 +21,7 @@ public class ProjectService : IProjectService
     {
         var projeler = await _context.Projects
         .Where(p => p.Members.Any(m => m.UserId == userId))
+        .Where(p => p.IsArchived == false)
         .Select(p => new ProjectResponse
         {
             Id = p.Id,

@@ -12,13 +12,13 @@ import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
 
 import { adminGuard } from '@core/guards/admin.guard';
 import { AdminProjects } from '@features/admin-projects/admin-projects';
+import { guestGuard } from '@core/guards/guest.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard]  },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
 
-  
 
   {
     path: 'projects/:id/board', 
