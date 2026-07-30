@@ -1,5 +1,5 @@
 <div *ngIf="isLoading" class="loading-state">
-  <p>Pano yükleniyor...</p>
+  <p><i class="fa-solid fa-spinner fa-spin"></i> Pano yükleniyor...</p>
 </div>
 
 <!-- 1. En dış div'den cdkDropListGroup'u kaldırdık -->
@@ -43,8 +43,8 @@
             (keyup.enter)="saveRenameColumn(col.id)"
             (keyup.escape)="cancelRenameColumn()" 
             autofocus />
-          <button type="button" class="btn-sm" (click)="saveRenameColumn(col.id)">✓</button>
-          <button type="button" class="btn-sm" (click)="cancelRenameColumn()">✕</button>
+          <button type="button" class="btn-sm" (click)="saveRenameColumn(col.id)"><i class="fas fa-check"></i></button>
+          <button type="button" class="btn-sm" (click)="cancelRenameColumn()"><i class="fas fa-times"></i></button>
         </div>
       </div>
 

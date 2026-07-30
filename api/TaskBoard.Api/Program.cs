@@ -15,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 // ActiviyLogService
 builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 
+// ProfileService
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 // TaskService
 builder.Services.AddScoped<ITaskService, TaskService>();
 

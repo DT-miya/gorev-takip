@@ -12,50 +12,53 @@ import { AuthService } from '@services/auth.service';
    @if (authService.isLoggedIn()) {
       <mat-toolbar [class.admin-toolbar]="isAdminArea()">
         <span class="app-title">
-          {{ isAdminArea() ? '👑 TaskBoard Admin' : 'Görev Takip' }}
+          {{ isAdminArea() ? 'TaskBoard Admin' : 'Görev Takip' }}
         </span>
 
         <span class="spacer"></span>
 
         <!-- 🔴 KULLANICI / STANDART MENÜ (Sadece /admin rotası dışındayken) -->
         @if (!isAdminArea()) {
-          <a mat-button routerLink="/dashboard" routerLinkActive="active">Panelim</a>
-          <a mat-button routerLink="/projects" routerLinkActive="active">Projelerim</a>
+          <a mat-button routerLink="/dashboard" routerLinkActive="active"> <i class="fas fa-tachometer-alt"></i> Panelim</a>
+          <a mat-button routerLink="/projects" routerLinkActive="active"> <i class="fas fa-folder"></i> Projelerim</a>
+          <a mat-button routerLink="/profile" routerLinkActive="active"> <i class="fas fa-user"></i> Profilim</a>
 
           <!-- Eğer Kullanıcı Admin ise Admin Paneline Geçiş Butonu -->
           @if (authService.getUserRole() === 'Admin') {
             <a mat-button routerLink="/admin" class="nav-admin-link">
-              👑 Admin Paneline Geç
+              <i class="fas fa-crown"></i> Admin Paneline Geç
             </a>
           }
         }
 
-        <!-- 👑 ADMİN MENÜSÜ (Sadece /admin rotası ve altındayken) -->
+        <!--  ADMİN MENÜSÜ (Sadece /admin rotası ve altındayken) -->
         @if (isAdminArea()) {
           <a mat-button routerLink="/admin" routerLinkActive="active">
-            📊 Admin Dashboard
+            <i class="fas fa-home"></i> Admin Anasayfa
           </a>
           <a mat-button routerLink="/admin-projects" routerLinkActive="active">
-            📁 Projeler
+            <i class="fas fa-folder"></i> Projeler
           </a>
           <a mat-button routerLink="/admin-users" routerLinkActive="active">
-            👥 Kullanıcılar
+            <i class="fas fa-users"></i> Kullanıcılar
           </a>
           <a mat-button routerLink="/admin-stats" routerLinkActive="active">
-            📈 İstatistikler
+            <i class="fas fa-chart-line"></i> İstatistikler
           </a>
 
           <a mat-button routerLink="/admin-logs" routerLinkActive="active">
-            ⓘ İşlem Logları
+            <i class="fas fa-info-circle"></i> İşlem Logları
           </a>
 
           <span class="divider">|</span>
           <a mat-button routerLink="/dashboard" class="back-link">
-            ↩️ Uygulamaya Dön
+            <i class="fas fa-arrow-left"></i> Uygulamaya Dön
           </a>
         }
 
-        <button mat-button (click)="logout()">Çıkış</button>
+        <button mat-button (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Çıkış
+        </button>
       </mat-toolbar>
     }
 

@@ -7,7 +7,7 @@
   </header>
 
   @if (loading()) {
-    <div class="state-box">Yükleniyor...</div>
+    <div class="state-box"><i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...</div>
   } @else if (stats()) {
     <div class="stats-grid">
       <article class="stat-card users">

@@ -1,0 +1,68 @@
+<div class="profile-container">
+  
+  <!-- Profil Bilgileri Güncelleme Kartı -->
+  <div class="card">
+    <h3>Profil Bilgileri</h3>
+
+    <div *ngIf="profileSuccessMsg" class="alert alert-success">
+      <i class="fa-solid fa-check-circle"></i> {{ profileSuccessMsg }}
+    </div>
+
+    <div *ngIf="profileErrorMsg" class="alert alert-danger">
+      <i class="fa-solid fa-exclamation-circle"></i> {{ profileErrorMsg }}
+    </div>
+
+    <form (ngSubmit)="onUpdateProfile()">
+      <div class="form-group">
+        <label>Ad Soyad</label>
+        <input type="text" [(ngModel)]="profileModel.fullName" name="fullName" required />
+      </div>
+
+      <div class="form-group">
+        <label>E-posta Adresi</label>
+        <input type="email" [(ngModel)]="profileModel.email" name="email" required />
+      </div>
+
+      <button type="submit" [disabled]="isProfileLoading" class="btn-primary">
+        <i class="fa-solid fa-sync" [class.fa-spin]="isProfileLoading"></i>
+        {{ isProfileLoading ? 'Güncelleniyor...' : 'Profili Güncelle' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Şifre Değiştirme Kartı -->
+  <div class="card">
+    <h3>Şifre Değiştir</h3>
+
+    <div *ngIf="passwordSuccessMsg" class="alert alert-success">
+      <i class="fa-solid fa-check-circle"></i> {{ passwordSuccessMsg }}
+    </div>
+
+    <div *ngIf="passwordErrorMsg" class="alert alert-danger">
+      <i class="fa-solid fa-exclamation-circle"></i> {{ passwordErrorMsg }}
+    </div>
+
+    <form (ngSubmit)="onChangePassword()">
+      <div class="form-group">
+        <label>Mevcut Şifre</label>
+        <input type="password" [(ngModel)]="passwordModel.currentPassword" name="currentPassword" required />
+      </div>
+
+      <div class="form-group">
+        <label>Yeni Şifre</label>
+        <input type="password" [(ngModel)]="passwordModel.newPassword" name="newPassword" required />
+      </div>
+
+      <div class="form-group">
+        <label>Yeni Şifre (Tekrar)</label>
+        <input type="password" [(ngModel)]="passwordModel.confirmPassword" name="confirmPassword" required />
+      </div>
+
+      <button type="submit" [disabled]="isPasswordLoading" class="btn-secondary">
+        <i class="fa-solid fa-key" [class.fa-spin]="isPasswordLoading"></i>
+        {{ isPasswordLoading ? 'Değiştiriliyor...' : 'Şifreyi Değiştir' }}
+      </button>
+    </form>
+  </div>
+
+</div>

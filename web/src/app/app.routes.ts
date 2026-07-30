@@ -41,6 +41,12 @@ export const routes: Routes = [
     component: DashboardPage,
     canActivate: [authGuard]
   },
+
+  {
+    path: 'profile',
+    loadComponent: () => import('@features/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
   
   {
     path: 'admin-stats',

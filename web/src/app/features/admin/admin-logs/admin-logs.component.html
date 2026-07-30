@@ -1,7 +1,7 @@
 <div class="logs-container">
   
   <div class="header-actions">
-    <h2>📋 Sistem İşlem Logları </h2>
+    <h2><i class="fas fa-history"></i> Sistem İşlem Logları </h2>
     
     <!-- 🔍 ARAMA KUTUSU -->
     <div class="search-box">
@@ -15,13 +15,13 @@
     
     
     <button type="button" class="btn-refresh" (click)="loadLogs()" [disabled]="isLoading">
-      🔄 Yenile
+      <i class="fas fa-sync-alt"></i> Yenile
     </button>
   </div>
 
   <!-- YÜKLENİYOR DURUMU -->
   <div *ngIf="isLoading" class="loading-state">
-    <p>Loglar yükleniyor...</p>
+    <p><i class="fa-solid fa-spinner fa-spin"></i> Loglar yükleniyor...</p>
   </div>
 
   <!-- ZAMAN TÜNELİ (TIMELINE) -->
@@ -29,7 +29,7 @@
     @for (log of logs; track log.id) {
       <div class="log-card">
         <div class="log-time">
-          📅 {{ log.createdAt | date:'dd.MM.yyyy HH:mm:ss' }}
+          <i class="fas fa-clock"></i> {{ log.createdAt | date:'dd.MM.yyyy HH:mm:ss' }}
         </div>
         
         <div class="log-badge" [ngClass]="getActionClass(log.action)">
