@@ -3,6 +3,7 @@ using TaskBoard.Api.Data;
 using TaskBoard.Api.Data.Entities;
 using TaskBoard.Api.DTOs;
 using TaskBoard.Api.DTOs.Board;
+using TaskBoard.Api.Exceptions;
 using TaskBoard.Api.Interfaces;
 
 namespace TaskBoard.Api.Services
@@ -143,11 +144,16 @@ namespace TaskBoard.Api.Services
         // 🔥 KRİTİK ENDPOINT İÇİN ÇALIŞAN METOD
     public async Task<BoardFullResponse> GetFullBoardAsync(int projectId, int userId)
 {
+
+    // 1. Proje var mı ve aktif mi (IsArchived == false) kontrolü
+    var project = await _context.Projects
+        .FirstOrDefaultAsync(p => p.Id == projectId && !p.IsArchived)
+        ?? throw new ForbiddenException("Proje bulunamadı veya arşivlenmiş.");
+
+        
     await _projectService.EnsureMemberAsync(projectId, userId);
 
-    var project = await _context.Projects.FindAsync(projectId)
-        ?? throw new KeyNotFoundException("Proje bulunamadı.");
-
+    
     var columns = await _context.BoardColumns
         .Where(c => c.ProjectId == projectId)
         .OrderBy(c => c.Order)

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
-import { TaskboardComponent } from './features/taskboard/taskboard.component';
 import { ProjectListComponent } from './features/projects/project-list/project-list';
 import { authGuard } from './core/guards/auth.guard';
 import { BoardViewComponent } from './features/board/pages/board-view.component';
@@ -12,17 +11,13 @@ import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
 
 import { adminGuard } from '@core/guards/admin.guard';
 import { AdminProjects } from '@features/admin-projects/admin-projects';
+import { guestGuard } from '@core/guards/guest.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard]  },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
 
-  { 
-    path: 'taskboard', 
-    component: TaskboardComponent, 
-    canActivate: [authGuard] 
-  },
 
   {
     path: 'projects/:id/board', 

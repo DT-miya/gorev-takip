@@ -17,7 +17,7 @@ public class DashboardService : IDashboardService
     public async Task<List<AssignedTaskDto>> GetAssignedTasksAsync(int userId)
     {
         var tasks = await _context.Tasks
-        .Where(t => t.AssigneeId == userId)
+        .Where(t => t.AssigneeId == userId && !t.Column.Project.IsArchived)
         .OrderBy(t => t.DueDate)
         .Select(t => new AssignedTaskDto
         {
