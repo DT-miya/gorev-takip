@@ -70,7 +70,7 @@ onSearchChange(searchValue: string): void {
       next: (result) => {
         this.users = result.items;
         this.totalCount = result.totalCount;
-        this.totalPages = result.totalPages;
+        this.totalPages = result.totalPages ?? 1;
         this.isLoading = false;
 
         // Arayüzün güncellendiğinden emin oluyoruz
