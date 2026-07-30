@@ -9,6 +9,6 @@ namespace TaskBoard.Api.Interfaces
         Task<TaskResponse> UpdateAsync(int taskId, UpdateTaskRequest request, int userId);
         Task<bool> DeleteAsync(int taskId, int userId);
         Task<bool> MoveAsync(int taskId, MoveTaskRequest request, int userId);
-        Task<BoardFullResponse> GetFullBoardAsync(int projectId, int userId);
+        Task<BoardFullResponse> GetFullBoardAsync(int projectId, int userId, bool skipmemberCheck = false);
     }
 }

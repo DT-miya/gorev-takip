@@ -2,10 +2,10 @@
   <h1>Bana Atanan Görevler</h1>
 
   <div class="filters">
-    <button mat-button (click)="setPriorityFilter('Tümü')">Tümü</button>
-    <button mat-button (click)="setPriorityFilter('High')">Yüksek</button>
-    <button mat-button (click)="setPriorityFilter('Medium')">Orta</button>
-    <button mat-button (click)="setPriorityFilter('Low')">Düşük</button>
+    <button mat-button [class.active]="selectedPriority() === 'Tümü'" (click)="setPriorityFilter('Tümü')">Tümü</button>
+<button mat-button [class.active]="selectedPriority() === 'High'" (click)="setPriorityFilter('High')">Yüksek</button>
+<button mat-button [class.active]="selectedPriority() === 'Medium'" (click)="setPriorityFilter('Medium')">Orta</button>
+<button mat-button [class.active]="selectedPriority() === 'Low'" (click)="setPriorityFilter('Low')">Düşük</button>
   </div>
 
   @if (loading()) {

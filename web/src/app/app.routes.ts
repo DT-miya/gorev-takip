@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+
 import { ProjectListComponent } from './features/projects/project-list/project-list';
 import { authGuard } from './core/guards/auth.guard';
 import { BoardViewComponent } from './features/board/pages/board-view.component';

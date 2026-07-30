@@ -1,4 +1,6 @@
 /* Global Temel Stiller */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -14,8 +16,11 @@ body {
   min-height: 100vh;
 }
 
+/* Material form-field etiketinin kırpılmasını önle */
+.mat-mdc-form-field {
+  padding-top: 6px;
+}
 
-.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
-    --mat-button-text-state-layer-color: rgb(216 229 248) !important;
-    --mat-button-text-ripple-color: rgb(193 208 230) !important;
+.mat-mdc-text-field-wrapper {
+  overflow: visible;
 }
