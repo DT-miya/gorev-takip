@@ -23,7 +23,6 @@ namespace TaskBoard.Api.Services
             var column = await _context.BoardColumns.FindAsync(request.ColumnId)
                 ?? throw new KeyNotFoundException("Kolon bulunamadı.");
 
-            // 🔐 Yetki Kontrolü
             await _projectService.EnsureMemberAsync(column.ProjectId, userId);
 
             int maxOrder = await _context.Tasks
@@ -78,108 +77,106 @@ namespace TaskBoard.Api.Services
 
         public async Task<bool> MoveAsync(int taskId, MoveTaskRequest request, int userId)
         {
-        var task = await _context.Tasks.FindAsync(taskId);
-    if (task == null) return false;
+            var task = await _context.Tasks.FindAsync(taskId);
+            if (task == null) return false;
 
-    int sourceColumnId = task.ColumnId;
-    int targetColumnId = request.TargetColumnId;
-    int newOrder = request.NewOrder;
+            int sourceColumnId = task.ColumnId;
+            int targetColumnId = request.TargetColumnId;
+            int newOrder = request.NewOrder;
 
-    // SENARYO 1: Farklı Kolona Aktarım Yapılıyor
-    if (sourceColumnId != targetColumnId)
-    {
-        // A) Eski (Kaynak) kolondaki kalan görevleri çek ve sıralarını 1, 2, 3... diye yeniden düzenle
-        var sourceTasks = await _context.Tasks
-            .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
-            .OrderBy(t => t.Order)
-            .ToListAsync();
-
-        for (int i = 0; i < sourceTasks.Count; i++)
-        {
-            sourceTasks[i].Order = i + 1;
-        }
-
-        // B) Taşınan görevin kolonunu ve geçici sırasını güncelle
-        task.ColumnId = targetColumnId;
-        task.Order = newOrder;
-
-        // C) Yeni (Hedef) kolondaki diğer tüm görevleri çek
-        var targetTasks = await _context.Tasks
-            .Where(t => t.ColumnId == targetColumnId && t.Id != taskId)
-            .OrderBy(t => t.Order)
-            .ToListAsync();
-
-        // D) Taşınan görevi yeni kolondaki hedeflenen indekse araya ekle
-        int insertIndex = Math.Clamp(newOrder - 1, 0, targetTasks.Count);
-        targetTasks.Insert(insertIndex, task);
-
-        // E) Hedef kolondaki tüm görevlerin Order değerini 1'den başlatarak sırayla yaz
-        for (int i = 0; i < targetTasks.Count; i++)
-        {
-            targetTasks[i].Order = i + 1;
-        }
-    }
-    // SENARYO 2: Aynı Kolon İçinde Yer Değiştiriliyor
-    else
-    {
-        var columnTasks = await _context.Tasks
-            .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
-            .OrderBy(t => t.Order)
-            .ToListAsync();
-
-        int insertIndex = Math.Clamp(newOrder - 1, 0, columnTasks.Count);
-        columnTasks.Insert(insertIndex, task);
-
-        for (int i = 0; i < columnTasks.Count; i++)
-        {
-            columnTasks[i].Order = i + 1;
-        }
-    }
-
-    await _context.SaveChangesAsync();
-    return true;
-        }
-
-        // 🔥 KRİTİK ENDPOINT İÇİN ÇALIŞAN METOD
-    public async Task<BoardFullResponse> GetFullBoardAsync(int projectId, int userId)
-{
-    await _projectService.EnsureMemberAsync(projectId, userId);
-
-    var project = await _context.Projects.FindAsync(projectId)
-        ?? throw new KeyNotFoundException("Proje bulunamadı.");
-
-    var columns = await _context.BoardColumns
-        .Where(c => c.ProjectId == projectId)
-        .OrderBy(c => c.Order)
-        .Include(c => c.Tasks.OrderBy(t => t.Order))
-            .ThenInclude(t => t.Assignee)
-        .ToListAsync();
-
-    return new BoardFullResponse
-    {
-        ProjectId = project.Id,
-        ProjectName = project.Name,
-        Columns = columns.Select(c => new ColumnResponse
-        {
-            Id = c.Id,
-            ProjectId = c.ProjectId,
-            Title = c.Name,
-            Order = c.Order,
-            Tasks = c.Tasks.OrderBy(t => t.Order).Select(t => new TaskResponse
+            // SENARYO 1: Farklı Kolona Aktarım Yapılıyor
+            if (sourceColumnId != targetColumnId)
             {
-                Id = t.Id,
-                ColumnId = t.ColumnId,
-                Title = t.Title,
-                Description = t.Description,
-                Priority = t.Priority,
-                Order = t.Order,
-                AssigneeId = t.AssigneeId,
-                AssigneeName = t.Assignee?.FullName,
-                DueDate = t.DueDate
-            }).ToList()
-        }).ToList()
-    };
-}
+                var sourceTasks = await _context.Tasks
+                    .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
+                    .OrderBy(t => t.Order)
+                    .ToListAsync();
+
+                for (int i = 0; i < sourceTasks.Count; i++)
+                {
+                    sourceTasks[i].Order = i + 1;
+                }
+
+                task.ColumnId = targetColumnId;
+                task.Order = newOrder;
+
+                var targetTasks = await _context.Tasks
+                    .Where(t => t.ColumnId == targetColumnId && t.Id != taskId)
+                    .OrderBy(t => t.Order)
+                    .ToListAsync();
+
+                int insertIndex = Math.Clamp(newOrder - 1, 0, targetTasks.Count);
+                targetTasks.Insert(insertIndex, task);
+
+                for (int i = 0; i < targetTasks.Count; i++)
+                {
+                    targetTasks[i].Order = i + 1;
+                }
+            }
+            // SENARYO 2: Aynı Kolon İçinde Yer Değiştiriliyor
+            else
+            {
+                var columnTasks = await _context.Tasks
+                    .Where(t => t.ColumnId == sourceColumnId && t.Id != taskId)
+                    .OrderBy(t => t.Order)
+                    .ToListAsync();
+
+                int insertIndex = Math.Clamp(newOrder - 1, 0, columnTasks.Count);
+                columnTasks.Insert(insertIndex, task);
+
+                for (int i = 0; i < columnTasks.Count; i++)
+                {
+                    columnTasks[i].Order = i + 1;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // KRİTİK ENDPOINT İÇİN ÇALIŞAN METOD
+        public async Task<BoardFullResponse> GetFullBoardAsync(int projectId, int userId, bool skipMemberCheck = false)
+        {
+            if (!skipMemberCheck)
+            {
+                await _projectService.EnsureMemberAsync(projectId, userId);
+            }
+
+            var project = await _context.Projects.FindAsync(projectId)
+                ?? throw new KeyNotFoundException("Proje bulunamadı.");
+
+            var columns = await _context.BoardColumns
+                .Where(c => c.ProjectId == projectId)
+                .OrderBy(c => c.Order)
+                .Include(c => c.Tasks.OrderBy(t => t.Order))
+                    .ThenInclude(t => t.Assignee)
+                .ToListAsync();
+
+            return new BoardFullResponse
+            {
+                ProjectId = project.Id,
+                ProjectName = project.Name,
+                Columns = columns.Select(c => new ColumnResponse
+                {
+                    Id = c.Id,
+                    ProjectId = c.ProjectId,
+                    Title = c.Name,
+                    Order = c.Order,
+                    Tasks = c.Tasks.OrderBy(t => t.Order).Select(t => new TaskResponse
+                    {
+                        Id = t.Id,
+                        ColumnId = t.ColumnId,
+                        Title = t.Title,
+                        Description = t.Description,
+                        Priority = t.Priority,
+                        Order = t.Order,
+                        AssigneeId = t.AssigneeId,
+                        AssigneeName = t.Assignee?.FullName,
+                        DueDate = t.DueDate
+                    }).ToList()
+                }).ToList()
+            };
+        }
 
         private async Task<TaskResponse> MapToResponseAsync(int taskId)
         {

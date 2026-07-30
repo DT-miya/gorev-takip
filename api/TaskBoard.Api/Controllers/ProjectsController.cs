@@ -125,7 +125,7 @@ string clientIp = HttpContext.GetClientIpAddress();
 public async Task<IActionResult> GetMembers(int id)
     {
         var userId = GetUserId();
-        var members = await _projectService.GetMembersAsync(id, userId);
+        var members = await _projectService.GetMembersAsync(id, userId, skipmemberCheck: false);
         return Ok(members);
     }
 

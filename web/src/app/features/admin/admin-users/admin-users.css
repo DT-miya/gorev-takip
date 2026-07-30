@@ -2,80 +2,20 @@
   display: block;
 }
 
-.users-table {
+.admin-users-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Arama kutusu */
+.search-box {
+  margin-bottom: 16px;
+}
+
+.search-box .form-control {
   width: 100%;
-  border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
-
-.users-table thead {
-  background: #f8fafc;
-}
-
-.users-table th {
-  text-align: left;
-  padding: 16px 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.users-table td {
-  padding: 16px 20px;
-  font-size: 14px;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.users-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.users-table tbody tr {
-  transition: background 0.15s;
-}
-
-.users-table tbody tr:hover {
-  background: #f8fafc;
-}
-
-.role-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  background: #e2e8f0;
-  color: #475569;
-}
-
-.role-badge.admin {
-  background: #ede9fe;
-  color: #7c3aed;
-}
-
-.role-toggle {
-  padding: 6px 14px;
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.role-toggle:hover {
-  background: #f1f5f9;
-}
-
-.search-box input {
-  width: 100%;
+  max-width: 360px;
   box-sizing: border-box;
   border: 1px solid #dbe3ef;
   border-radius: 8px;
@@ -85,46 +25,138 @@
   font-size: 14px;
 }
 
-.search-box {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(120px, 160px));
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.search-box label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.search-box input:focus {
+.search-box .form-control:focus {
   border-color: #2563eb;
   outline: none;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.page-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
+/* Tablo — admin-projects ile birebir aynı */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
 }
 
-.page-buttons button {
-  padding: 6px 12px;
+.users-table thead {
+  background: #f8fafc;
+}
+
+.users-table th,
+.users-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf2f7;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.users-table th {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.users-table td {
+  color: #334155;
+  font-size: 14px;
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Rol rozeti — admin-projects count-badge stiliyle uyumlu */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.role-badge.admin {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* İşlem butonu — admin-projects action-button stiliyle aynı */
+.role-toggle {
   border: 1px solid #cbd5e1;
-  background: #fff;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  padding: 7px 12px;
+  background: #ffffff;
+  color: #334155;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
   transition: background 0.15s;
 }
 
-.page-indicator {
+.role-toggle:hover {
+  background: #f8fafc;
+}
+
+/* Sayfalandırma — admin-projects pagination stiliyle aynı */
+.pagination-bar {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: #64748b;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.info-text {
+  color: #475569;
+  font-size: 14px;
+}
+
+.page-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-page {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-page:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.page-indicator {
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .admin-users-page {
+    padding: 16px;
+  }
+  .pagination-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

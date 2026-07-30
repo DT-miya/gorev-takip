@@ -125,9 +125,12 @@ public class ProjectService : IProjectService
         ;
     }
 
-    public async Task<List<MemberDto>> GetMembersAsync(int projectId, int userId)
+    public async Task<List<MemberDto>> GetMembersAsync(int projectId, int userId, bool skipmemberCheck = false)
     {
-        await EnsureMemberAsync(projectId, userId);
+        if (!skipmemberCheck)
+        {
+            await EnsureMemberAsync(projectId, userId);
+        }
 
         var members = await _context.ProjectMembers
         .Where (m => m.ProjectId == projectId)

@@ -1,4 +1,6 @@
 /* Global Temel Stiller */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,4 +14,13 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   color: #334155;
   min-height: 100vh;
+}
+
+/* Material form-field etiketinin kırpılmasını önle */
+.mat-mdc-form-field {
+  padding-top: 6px;
+}
+
+.mat-mdc-text-field-wrapper {
+  overflow: visible;
 }

@@ -40,33 +40,65 @@
   padding: 12px;
   box-sizing: border-box;
   user-select: none;
+  flex: 0 0 280px;
 }
 
 .column-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  padding: 4px 6px 10px;
   cursor: grab;
+  border-bottom: 2px solid #e2e8f0;
+  transition: border-color 0.2s ease;
 }
+
+.column-header:hover {
+  border-bottom-color: #cbd5e1;
+}
+
 .column-header:active {
   cursor: grabbing;
 }
 
 .column-header h3 {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   color: #172b4d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
+/* Başlığın solunda renkli nokta — kolonu görsel olarak işaretler */
+.column-header h3::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  flex-shrink: 0;
+}
+  
+
+
 .task-count {
-  background: #dfe1e6;
-  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  background: #eef2f7;
+  color: #64748b;
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #42526e;
+  letter-spacing: 0;
 }
 
 /* Görev Kartlarının Listesi (Dikey Scroll) */
@@ -102,11 +134,7 @@
 }
 
 /* Öncelik Rozetleri (Badges) */
-.badge {
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-}
+
 
 .badge.high {
   background: #ffebe6;
@@ -175,6 +203,26 @@
   border-radius: 3px;
   cursor: pointer;
   font-weight: 500;
+}
+
+
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-sm:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
 }
 
 .btn-save:hover {
@@ -271,12 +319,7 @@
   gap: 4px;
 }
 
-.board-container {
-  padding: 20px;
-  height: calc(100vh - 80px);
-  display: flex;
-  flex-direction: column;
-}
+
 
 .board-header h2 {
   margin-top: 0;
@@ -295,25 +338,9 @@
   flex-grow: 1;
 }
 
-/* Sabit Genişlikte Kolon Kartları */
-.column-card {
-  flex: 0 0 280px;
-  width: 280px;
-  background-color: #f3f4f6;
-  border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
-}
 
-.column-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  cursor: grab;
-}
+
+
 
 .column-header h3 {
   margin: 0;
@@ -321,21 +348,22 @@
   font-weight: 600;
 }
 
-.task-count {
-  font-size: 0.85rem;
-  color: #6b7280;
-}
-
-.column-actions {
-  display: flex;
-  gap: 4px;
-}
 
 .btn-icon {
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   border: none;
+  background: transparent;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  transition: background 0.15s ease;
 }
+
 
 /* Görev Kartları Listesi */
 .tasks-list {
@@ -386,6 +414,36 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.column-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.column-header:hover .column-actions {
+  opacity: 1;
+}
+
+
+.rename-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-control-sm {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .due-date {

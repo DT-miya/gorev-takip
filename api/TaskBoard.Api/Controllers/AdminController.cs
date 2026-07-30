@@ -141,7 +141,7 @@ namespace TaskBoard.Api.Controllers
         public async Task<IActionResult> GetProjectTasks(int projectId)
         {
             var userId = GetUserId();
-            var board = await _taskService.GetFullBoardAsync(projectId, userId);
+            var board = await _taskService.GetFullBoardAsync(projectId, userId, skipmemberCheck: true);
             return Ok(board);  
         }
 
@@ -149,7 +149,7 @@ namespace TaskBoard.Api.Controllers
         public async Task<IActionResult> GetProjectMembers(int projectId)
         {
             var userId = GetUserId();
-            var members = await _projectService.GetMembersAsync(projectId, userId);
+            var members = await _projectService.GetMembersAsync(projectId, userId,skipmemberCheck: true);
             return Ok(members);
         }
 
