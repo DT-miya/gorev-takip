@@ -13,3 +13,9 @@ body {
   color: #334155;
   min-height: 100vh;
 }
+
+
+.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+    --mat-button-text-state-layer-color: rgb(216 229 248) !important;
+    --mat-button-text-ripple-color: rgb(193 208 230) !important;
+}
