@@ -46,42 +46,48 @@ export class AdminService {
   }
 
   getProjects(limit?: number): Observable<AdminProject[]> {
-    const options = limit ? { params: { limit } } : undefined;
-    return this.http.get<AdminProject[]>(`${this.apiUrl}/projects`, options);
+    const options = limit ? { params: new HttpParams().set('limit', limit.toString()) } : undefined;
+    return this.http.get<AdminProject[]>(`${this.apiUrl}/projects/all`, options);
   }
 
+  // ⚡ DÜZELTİLEN YER: PagedResult döner, /projects endpoint'ine istek atar
   getProjectsPage(params: {
     page: number;
     pageSize: number;
-    search?: string;
+    projectName?: string;
+    ownerSearch?: string;
     minColumns?: number | null;
     minTasks?: number | null;
     minMembers?: number | null;
     showArchived?: boolean;
   }): Observable<PagedResult<AdminProject>> {
     let httpParams = new HttpParams()
-      .set('page', params.page)
-      .set('pageSize', params.pageSize);
+      .set('page', params.page.toString())
+      .set('pageSize', params.pageSize.toString());
 
-    if (params.search) {
-      httpParams = httpParams.set('search', params.search);
+    if (params.projectName && params.projectName.trim()) {
+      httpParams = httpParams.set('projectName', params.projectName.trim());
+    }
+
+    if (params.ownerSearch && params.ownerSearch.trim()) {
+      httpParams = httpParams.set('ownerSearch', params.ownerSearch.trim());
     }
 
     if (params.minColumns !== null && params.minColumns !== undefined) {
-      httpParams = httpParams.set('minColumns', params.minColumns);
+      httpParams = httpParams.set('minColumns', params.minColumns.toString());
     }
 
     if (params.minTasks !== null && params.minTasks !== undefined) {
-      httpParams = httpParams.set('minTasks', params.minTasks);
+      httpParams = httpParams.set('minTasks', params.minTasks.toString());
     }
 
     if (params.minMembers !== null && params.minMembers !== undefined) {
-      httpParams = httpParams.set('minMembers', params.minMembers);
+      httpParams = httpParams.set('minMembers', params.minMembers.toString());
     }
 
-    httpParams = httpParams.set('showArchived', params.showArchived ?? false);
+    httpParams = httpParams.set('showArchived', (params.showArchived ?? false).toString());
 
-    return this.http.get<PagedResult<AdminProject>>(`${this.apiUrl}/projects/paged`, {
+    return this.http.get<PagedResult<AdminProject>>(`${this.apiUrl}/projects`, {
       params: httpParams
     });
   }

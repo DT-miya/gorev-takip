@@ -16,109 +16,130 @@
     </button>
   </div>
 
-  <div class="filters">
-    <label>
-      <span>Proje adı</span>
-      <input type="text" placeholder="Ada göre ara" [value]="searchTerm()" (input)="setSearchTerm($any($event.target).value)">
-    </label>
-    <label>
-      <span>Min kolon</span>
-      <input type="number" min="0" placeholder="0" (input)="setMinColumns($any($event.target).value)">
-    </label>
-    <label>
-      <span>Min görev</span>
-      <input type="number" min="0" placeholder="0" (input)="setMinTasks($any($event.target).value)">
-    </label>
-    <label>
-      <span>Min üye</span>
-      <input type="number" min="0" placeholder="0" (input)="setMinMembers($any($event.target).value)">
-    </label>
+  @if (error()) {
+    <div class="state-box error">{{ error() }}</div>
+  }
+
+  <div class="table-wrap" [class.is-loading]="loading()">
+    @if (loading()) {
+      <div class="table-loader-overlay">Yükleniyor...</div>
+    }
+
+    <table class="projects-table">
+      <thead>
+        <tr>
+          <!-- Proje Adı Filtresi -->
+          <th class="filter-th">
+            <div class="th-inner">
+              <span>Proje Adı</span>
+              <button type="button" class="th-filter-btn" (click)="toggleNameFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showNameFilter()" (click)="$event.stopPropagation()">
+              <input 
+                type="text" 
+                placeholder="Proje adı ile ara..." 
+                [ngModel]="projectNameSearch()"
+                (ngModelChange)="onProjectNameChange($event)"
+                class="form-control" />
+            </div>
+          </th>
+
+          <th>Açıklama</th>
+
+          <!-- Proje Sahibi Filtresi -->
+          <th class="filter-th">
+            <div class="th-inner">
+              <span>Proje Sahibi</span>
+              <button type="button" class="th-filter-btn" (click)="toggleOwnerFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showOwnerFilter()" (click)="$event.stopPropagation()">
+              <input 
+                type="text" 
+                placeholder="Sahip adı veya e-posta ara..." 
+                [ngModel]="ownerSearch()"
+                (ngModelChange)="onOwnerSearchChange($event)"
+                class="form-control" />
+            </div>
+          </th>
+
+          <th>Kolon</th>
+          <th>Görev</th>
+          <th>Üye</th>
+          <th>Oluşturulma</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (projects().length === 0 && !loading()) {
+          <tr>
+            <td colspan="8" class="empty-row">Filtreye uygun proje bulunamadı.</td>
+          </tr>
+        } @else {
+          @for (project of projects(); track project.id) {
+            <tr>
+              <td class="project-name">{{ project.name }}</td>
+              <td class="description">{{ project.description || '-' }}</td>
+              <td>
+                <div class="owner">
+                  <strong>{{ project.ownerName || 'Bilinmiyor' }}</strong>
+                  <span>{{ project.ownerEmail || '-' }}</span>
+                </div>
+              </td>
+              <td><span class="count-badge">{{ project.columnCount }}</span></td>
+              <td><span class="count-badge task">{{ project.taskCount }}</span></td>
+              <td><span class="count-badge member">{{ project.memberCount }}</span></td>
+              <td>{{ project.createdAt | date:'dd MMM yyyy HH:mm' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button type="button" class="action-button primary" (click)="openProjectTasks(project.id)">
+                    Görevleri Gör
+                  </button>
+                  <button type="button" class="action-button" (click)="openProjectMembers(project.id)">
+                    Üyeler
+                  </button>
+                  @if (showArchived()) {
+                    <button type="button" class="action-button success" (click)="unarchiveProject(project.id)">
+                      Geri Getir
+                    </button>
+                  } @else {
+                    <button type="button" class="action-button warning" (click)="archiveProject(project.id)">
+                      Arşivle
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
   </div>
 
-  @if (loading()) {
-    <div class="state-box">Projeler yükleniyor...</div>
-  } @else if (error()) {
-    <div class="state-box error">{{ error() }}</div>
-  } @else {
-    @if (projects().length === 0) {
-      <div class="state-box">Filtreye uygun proje bulunamadı.</div>
-    } @else {
-      <div class="table-wrap">
-        <table class="projects-table">
-          <thead>
-            <tr>
-              <th>Proje Adı</th>
-              <th>Açıklama</th>
-              <th>Proje Sahibi</th>
-              <th>Kolon</th>
-              <th>Görev</th>
-              <th>Üye</th>
-              <th>Oluşturulma</th>
-              <th>İşlem</th>
-            </tr>
-          </thead>
-          <tbody>
-           
-            @for (project of projects(); track project.id) {
-              <tr>
-                <td class="project-name">{{ project.name }}</td>
-                <td class="description">{{ project.description || '-' }}</td>
-                <td>
-                  <div class="owner">
-                    <strong>{{ project.ownerName || 'Bilinmiyor' }}</strong>
-                    <span>{{ project.ownerEmail || '-' }}</span>
-                  </div>
-                </td>
-                <td><span class="count-badge">{{ project.columnCount }}</span></td>
-                <td><span class="count-badge task">{{ project.taskCount }}</span></td>
-                <td><span class="count-badge member">{{ project.memberCount }}</span></td>
-                <td>{{ project.createdAt | date:'dd MMM yyyy HH:mm' }}</td>
-                <td>
-                  <div class="action-buttons">
-                    <button type="button" class="action-button primary" (click)="openProjectTasks(project.id)">
-                      Görevleri Gör
-                    </button>
-                    <button type="button" class="action-button" (click)="openProjectMembers(project.id)">
-                      Üyeler
-                    </button>
-                    @if (showArchived()) {
-                      <button type="button" class="action-button success" (click)="unarchiveProject(project.id)">
-                        Geri Getir
-                      </button>
-                    } @else {
-                      <button type="button" class="action-button warning" (click)="archiveProject(project.id)">
-                        Arşivle
-                      </button>
-                    }
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+  <div class="pagination">
+    <button type="button" (click)="previousPage()" [disabled]="currentPage() === 1">Önceki</button>
+    <span>Sayfa {{ currentPage() }} / {{ totalPages() }}</span>
+    <button type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Sonraki</button>
+  </div>
 
-      <div class="pagination">
-        <button type="button" (click)="previousPage()" [disabled]="currentPage() === 1">Önceki</button>
-        <span>Sayfa {{ currentPage() }} / {{ totalPages() }}</span>
-        <button type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Sonraki</button>
-      </div>
+  @if (message()) {
+    <div class="state-box">{{ message() }}</div>
+  }
 
-      @if (message()) {
-        <div class="state-box">{{ message() }}</div>
-      }
+  @if (selectedTab()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeModal()">✕</button>
 
-      @if (selectedTab()) {
-        <div class="modal-overlay" (click)="closeModal()">
-          <div class="modal-box" (click)="$event.stopPropagation()">
-            <button class="modal-close" (click)="closeModal()">✕</button>
-
-            @if (selectedTab() === 'tasks') {
-              <h3>Görevler</h3>
-              @if (taskData().length === 0) {
-                <p>Bu projede görev bulunmuyor.</p>
-              } @else {
-                @for (column of taskData(); track column.id) {
+        <!-- GÖREVLER MODALI -->
+        @if (selectedTab() === 'tasks') {
+          <h3>Görevler</h3>
+          @if (!taskData() || taskData().length === 0) {
+            <p>Bu projede görev bulunmuyor.</p>
+          } @else {
+            <div class="task-modal-body">
+              <!-- Durum 1: Backend nesne/kolon dizisi gönderiyorsa (column.title & column.tasks) -->
+              @if (taskData()[0]?.title || taskData()[0]?.tasks) {
+                @for (column of taskData(); track column.id || column.title) {
                   <div class="task-column">
                     <strong>{{ column.title }}</strong>
                     <ul>
@@ -129,23 +150,39 @@
                   </div>
                 }
               }
-            }
-
-            @if (selectedTab() === 'members') {
-              <h3>Üyeler</h3>
-              @if (memberData().length === 0) {
-                <p>Bu projede üye bulunmuyor.</p>
-              } @else {
-                <ul>
-                  @for (member of memberData(); track member.userId) {
-                    <li>{{ member.fullName }} - {{ member.email }}</li>
-                  }
-                </ul>
+              <!-- Durum 2: Backend düz (flat) task dizisi gönderiyorsa -->
+              @else {
+                <div class="task-column">
+                  <ul>
+                    @for (task of taskData(); track task.id) {
+                      <li>
+                        @if (task.columnName) {
+                          <span class="column-tag">[{{ task.columnName }}]</span>
+                        }
+                        {{ task.title }}
+                      </li>
+                    }
+                  </ul>
+                </div>
               }
-            }
-          </div>
-        </div>
-      }
-    }
+            </div>
+          }
+        }
+
+        <!-- ÜYELER MODALI -->
+        @if (selectedTab() === 'members') {
+          <h3>Üyeler</h3>
+          @if (!memberData() || memberData().length === 0) {
+            <p>Bu projede üye bulunmuyor.</p>
+          } @else {
+            <ul>
+              @for (member of memberData(); track member.userId || member.id) {
+                <li>{{ member.fullName || member.name }} - {{ member.email }}</li>
+              }
+            </ul>
+          }
+        }
+      </div>
+    </div>
   }
 </section>
