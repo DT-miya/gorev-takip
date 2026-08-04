@@ -4,7 +4,9 @@ namespace TaskBoard.Api.DTOs.Admin;
 // Parametre Modeli
 public class UserFilterParametersDto
 {
-    public string? Search { get; set; } // E-posta veya Ad-Soyad araması
+    public string? SearchEmail { get; set; } // E-posta
+
+    public string? SearchName { get; set; } // Ad
     public int Page { get; set; } = 1;  // Varsayılan 1. sayfa
     public int PageSize { get; set; } = 20; // Varsayılan 20 kayıt
 

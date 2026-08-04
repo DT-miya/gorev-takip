@@ -19,12 +19,10 @@ public class ActivityLogService : IActivityLogService
         var log = new ActivityLog
         {
             UserId = dto.UserId,
-            UserName = dto.UserName,
+            UserMail = dto.UserMail,
             Action = dto.Action,
             Description = dto.Description,
-            ProjectId = dto.ProjectId,
             IpAddress = dto.IpAddress,
-            TaskId = dto.TaskId,
             CreatedAt = DateTime.UtcNow
         };
 

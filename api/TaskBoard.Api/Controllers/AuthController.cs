@@ -37,7 +37,7 @@ public class AuthController : ControllerBase
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = 0, // Kayıt anında ID bilinmiyorsa 0 veya AuthResponse'a Id eklenebilir
-            UserName = request.Email,
+            UserMail = request.Email,
             Action = "USER_REGISTER",
             Description = $"{request.Email} e-postası ile yeni hesap oluşturuldu.",
             IpAddress = clientIp
@@ -63,7 +63,7 @@ public class AuthController : ControllerBase
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = 0,
-            UserName = request.Email,
+            UserMail = request.Email,
             Action = "USER_LOGIN",
             Description = $"{request.Email} sisteme giriş yaptı.",
             IpAddress = clientIp

@@ -27,13 +27,19 @@ public class AdminService : IAdminService
     {
         var query = _context.Users.AsNoTracking().AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(parameters.Search))
+        if (!string.IsNullOrWhiteSpace(parameters.SearchEmail))
         {
-            var searchTerm = parameters.Search.Trim();
-            query = query.Where(u => 
-                (u.Email != null && EF.Functions.Like(u.Email, $"%{searchTerm}%")) || 
-                (u.FullName != null && EF.Functions.Like(u.FullName, $"%{searchTerm}%"))
-            );
+
+           
+            var searchEmail = parameters.SearchEmail.Trim().ToLower();
+            query = query.Where(u => u.Email.ToLower().Contains(searchEmail));
+        }
+
+        if (!string.IsNullOrWhiteSpace(parameters.SearchName))
+        {
+            var searchName = parameters.SearchName.Trim().ToLower();
+            query = query.Where(u => u.FullName.ToLower().Contains(searchName));
+
         }
 
         var totalCount = await query.CountAsync();
@@ -250,7 +256,7 @@ public class AdminService : IAdminService
         return true;
     }
 
-    public async Task<bool> ArchiveProjectAsync(int projectId)
+    public async Task<bool> ArchiveProjectAsync(int projectId, int currentAdminId, string currentAdminName)
     {
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
         if (project == null)
@@ -261,7 +267,7 @@ public class AdminService : IAdminService
         return true;
     }
 
-    public async Task<bool> UnarchiveProjectAsync(int projectId)
+    public async Task<bool> UnarchiveProjectAsync(int projectId, int currentAdminId, string currentAdminName)
     {
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
         if (project == null)
