@@ -1,12 +1,20 @@
 <div class="admin-users-page">
 
 <div class="search-box">
-      <input 
-        type="text" 
-        placeholder="E-posta veya isim ile ara..." 
-        [ngModel]="searchTerm"
-        (ngModelChange)="onSearchChange($event)"
-        class="form-control" />
+<input 
+  type="text" 
+  placeholder="E-posta ile ara..." 
+  [ngModel]="searchEmail"
+  (ngModelChange)="onEmailChange($event)"
+  class="form-control" />
+
+<!-- Ad Soyad Input -->
+<input 
+  type="text"
+  placeholder="Ad Soyad ile ara..."
+  [ngModel]="searchName"
+  (ngModelChange)="onNameChange($event)"
+  class="form-control" />
     </div>
 
   <table class="users-table">

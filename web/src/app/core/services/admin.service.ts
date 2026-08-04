@@ -18,14 +18,21 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(search: string = '', page: number = 1, pageSize: number = 20): Observable<PagedResult<AdminUser>> {
+  getUsers(searchEmail: string = '', searchName: string = '', page: number = 1, pageSize: number = 20): Observable<PagedResult<AdminUser>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    if (search.trim()) {
-      params = params.set('search', search.trim());
+    if (searchEmail.trim()) {
+      params = params.set('searchEmail', searchEmail.trim());
     }
+
+    if (searchName.trim()) {
+      params = params.set('searchName', searchName.trim());
+    }
+     
+   
+    
 
     return this.http.get<PagedResult<AdminUser>>(`${this.apiUrl}/users`, { params });
   }
@@ -99,13 +106,19 @@ export class AdminService {
     return this.http.put(`${this.apiUrl}/projects/${projectId}/unarchive`, {});
   }
 
-  getLogs(search: string = '', page: number = 1, pageSize: number = 20): Observable<PagedResult<ActivityLog>> {
+  getLogs(searchEmail: string, searchAction: string, searchDescription: string, page: number = 1, pageSize: number = 20): Observable<PagedResult<ActivityLog>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    if (search.trim()) {
-      params = params.set('search', search.trim());
+    if (searchEmail.trim()) {
+      params = params.set('searchUserMail', searchEmail.trim());
+    }
+    if (searchAction.trim()) {
+      params = params.set('searchAction', searchAction.trim());
+    }
+    if (searchDescription.trim()) {
+      params = params.set('searchDescription', searchDescription.trim());
     }
 
     return this.http.get<PagedResult<ActivityLog>>(`${this.apiUrl}/logs`, { params });

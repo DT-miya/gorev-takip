@@ -56,16 +56,16 @@ public async Task<IActionResult> Update(int id, UpdateProjectRequest request)
 
     string clientIp = HttpContext.GetClientIpAddress();
 
-    var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
+    var userMail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
                 ?? "Kullanıcı";
 
         // 🚀 GİRİŞ İŞLEMİ LOG KAYDI
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "USER_UPDATE_PROJECT",
-            Description = $"{userName}, #{project.Id} Id'li {project.Name} projesini güncelledi.",
+            Description = $"{userMail}, #{project.Id} Id'li {project.Name} projesini güncelledi.",
             IpAddress = clientIp
         });
     
@@ -80,16 +80,16 @@ public async Task<IActionResult> Create(CreateProjectRequest request)
 
  string clientIp = HttpContext.GetClientIpAddress();
 
-    var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
+    var userMail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
                 ?? "Kullanıcı";
 
         // 🚀 GİRİŞ İŞLEMİ LOG KAYDI
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "USER_CREATE_PROJECT",
-            Description = $"{userName}, #{project.Id} Id'li {project.Name} projesini oluşturdu.",
+            Description = $"{userMail}, #{project.Id} Id'li {project.Name} projesini oluşturdu.",
             IpAddress = clientIp
         });
 
@@ -104,16 +104,16 @@ public async Task<IActionResult> Delete(int id)
 
 string clientIp = HttpContext.GetClientIpAddress();
 
-    var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
+    var userMail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
                 ?? "Kullanıcı";
 
         // 🚀 GİRİŞ İŞLEMİ LOG KAYDI
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "USER_DELETE_PROJECT",
-            Description = $"{userName}, #{id} Id'li projeyi sildi.",
+            Description = $"{userMail}, #{id} Id'li projeyi sildi.",
             IpAddress = clientIp
         });
 
@@ -138,16 +138,16 @@ public async Task<IActionResult> AddMember(int id, AddMemberRequest request)
 
           string clientIp = HttpContext.GetClientIpAddress();
 
-    var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
+    var userMail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
                 ?? "Kullanıcı";
 
         // 🚀 GİRİŞ İŞLEMİ LOG KAYDI
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "USER_ADD_PROJECT_MEMBER",
-            Description = $"{userName}, #{id} Id'li projeye #{request.Email} kullanıcısını ekledi.",
+            Description = $"{userMail}, #{id} Id'li projeye #{request.Email} kullanıcısını ekledi.",
             IpAddress = clientIp
         });
 
@@ -164,16 +164,16 @@ public async Task<IActionResult> RemoveMember(int id, int memberUserId)
 
 
     string clientIp = HttpContext.GetClientIpAddress();
-    var userName = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
+    var userMail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value 
                 ?? "Kullanıcı";
 
         // 🚀 GİRİŞ İŞLEMİ LOG KAYDI
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "USER_REMOVE_PROJECT_MEMBER",
-            Description = $"{userName}, #{id} Id'li projeden #{memberUserId} Id'li kullanıcıyı çıkardı.",
+            Description = $"{userMail}, #{id} Id'li projeden #{memberUserId} Id'li kullanıcıyı çıkardı.",
             IpAddress = clientIp
         });
 

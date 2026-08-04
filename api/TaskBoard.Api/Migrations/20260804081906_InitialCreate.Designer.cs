@@ -11,8 +11,8 @@ using TaskBoard.Api.Data;
 namespace TaskBoard.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260728091805_AddIpAddressToActivityLog")]
-    partial class AddIpAddressToActivityLog
+    [Migration("20260804081906_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,16 +40,10 @@ namespace TaskBoard.Api.Migrations
                     b.Property<string>("IpAddress")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TaskId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserMail")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -94,6 +88,9 @@ namespace TaskBoard.Api.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()

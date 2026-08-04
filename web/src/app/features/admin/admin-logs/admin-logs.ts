@@ -22,7 +22,11 @@ export class AdminLogsComponent implements OnInit {
   totalPages = 1;
   isLoading = false;
 
-  searchTerm = '';
+  searchEmail = '';
+  searchAction = '';
+  searchDescription = '';
+
+
   private searchSubject = new Subject<string>();
 
   private adminService = inject(AdminService);
@@ -36,7 +40,9 @@ export class AdminLogsComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(search => {
-      this.searchTerm = search;
+      this.searchEmail = this.searchEmail?.trim();
+      this.searchAction = this.searchAction?.trim();
+      this.searchDescription = this.searchDescription?.trim();
       this.currentPage = 1; // Yeni aramada 1. sayfaya sıfırla
       this.loadLogs();
     });
@@ -46,9 +52,28 @@ export class AdminLogsComponent implements OnInit {
     this.searchSubject.next(searchValue);
   }
 
+
+  onEmailChange(value: string): void {
+  this.searchEmail = value;
+  this.onSearchChange(this.searchEmail);
+}
+
+onActionChange(value: string): void {
+  this.searchAction = value;
+  this.onSearchChange(this.searchAction);
+}
+
+onDescriptionChange(value: string): void {
+  this.searchDescription = value;
+  this.onSearchChange(this.searchDescription);
+}
+
+
+
+
   loadLogs(): void {
     this.isLoading = true;
-    this.adminService.getLogs(this.searchTerm, this.currentPage, this.pageSize).subscribe({
+    this.adminService.getLogs(this.searchEmail, this.searchAction, this.searchDescription, this.currentPage, this.pageSize).subscribe({
       next: (result) => {
         this.logs = result.items || [];
         this.totalCount = result.totalCount || 0;
@@ -77,6 +102,23 @@ export class AdminLogsComponent implements OnInit {
       this.loadLogs();
     }
   }
+
+actionTypes: string[] = [
+    'ROLE_CHANGE',
+    'PROJECT_CREATED',
+    'PROJECT_DELETED',
+    'TASK_MOVED',
+    'TASK_CREATED',
+    'USER_LOGIN',
+    'USER_REGISTER',
+    'USER_LOGOUT',
+    'USER_CREATE_PROJECT',
+    'USER_DELETE_PROJECT',
+    'USER_UPDATE_PROJECT',
+    'USER_ADD_PROJECT_MEMBER',
+    'USER_REMOVE_PROJECT_MEMBER'
+  ];
+
 
   // Action türüne göre rozet renk sınıfı belirler
   getActionClass(action: string): string {
