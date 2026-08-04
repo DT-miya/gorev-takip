@@ -29,9 +29,11 @@ public class AdminService : IAdminService
 
         if (!string.IsNullOrWhiteSpace(parameters.Search))
         {
-            var searchTerm = parameters.Search.Trim().ToLower();
-            query = query.Where(u => u.Email.ToLower().Contains(searchTerm) || 
-                                     u.FullName.ToLower().Contains(searchTerm));
+            var searchTerm = parameters.Search.Trim();
+            query = query.Where(u => 
+                (u.Email != null && EF.Functions.Like(u.Email, $"%{searchTerm}%")) || 
+                (u.FullName != null && EF.Functions.Like(u.FullName, $"%{searchTerm}%"))
+            );
         }
 
         var totalCount = await query.CountAsync();
@@ -98,10 +100,6 @@ public class AdminService : IAdminService
     {
         var query = _context.Projects
             .AsNoTracking()
-            .Include(p => p.Owner)
-            .Include(p => p.Columns)
-                .ThenInclude(c => c.Tasks)
-            .Include(p => p.Members)
             .OrderByDescending(p => p.CreatedAt)
             .Select(p => new ProjectDto
             {
@@ -110,8 +108,8 @@ public class AdminService : IAdminService
                 Description = p.Description,
                 CreatedAt = p.CreatedAt,
                 OwnerId = p.OwnerId,
-                OwnerName = p.Owner != null ? p.Owner.FullName : "Bilinmiyor",
-                OwnerEmail = p.Owner != null ? p.Owner.Email : "",
+                OwnerName = p.Owner != null ? (p.Owner.FullName ?? "İsimsiz") : "Bilinmiyor",
+                OwnerEmail = p.Owner != null ? (p.Owner.Email ?? "") : "",
                 ColumnCount = p.Columns.Count,
                 TaskCount = p.Columns.SelectMany(c => c.Tasks).Count(),
                 MemberCount = p.Members.Count
@@ -125,10 +123,12 @@ public class AdminService : IAdminService
         return await query.ToListAsync();
     }
 
+    // 🔍 ÇİFT FİLTRELİ SAYFALAMA METODU
     public async Task<PagedResponseDto<ProjectDto>> GetProjectsPageAsync(
         int page,
         int pageSize,
-        string? search,
+        string? projectName,
+        string? ownerSearch,
         int? minColumns,
         int? minTasks,
         int? minMembers,
@@ -138,17 +138,23 @@ public class AdminService : IAdminService
         pageSize = pageSize < 1 ? 20 : pageSize;
         pageSize = pageSize > 100 ? 100 : pageSize;
 
-        var query = _context.Projects.AsNoTracking().Where(p => p.IsArchived == showArchived)
-            .Include(p => p.Owner)
-            .Include(p => p.Columns)
-                .ThenInclude(c => c.Tasks)
-            .Include(p => p.Members)
-            .AsQueryable();
+        var query = _context.Projects
+            .AsNoTracking()
+            .Where(p => p.IsArchived == showArchived);
 
-        if (!string.IsNullOrWhiteSpace(search))
+        if (!string.IsNullOrWhiteSpace(projectName))
         {
-            var term = search.Trim();
-            query = query.Where(p => p.Name.Contains(term));
+            var nameTerm = projectName.Trim();
+            query = query.Where(p => EF.Functions.Like(p.Name, $"%{nameTerm}%"));
+        }
+
+        if (!string.IsNullOrWhiteSpace(ownerSearch))
+        {
+            var ownerTerm = ownerSearch.Trim();
+            query = query.Where(p => 
+                (p.Owner != null && p.Owner.FullName != null && EF.Functions.Like(p.Owner.FullName, $"%{ownerTerm}%")) ||
+                (p.Owner != null && p.Owner.Email != null && EF.Functions.Like(p.Owner.Email, $"%{ownerTerm}%"))
+            );
         }
 
         if (minColumns.HasValue)
@@ -179,8 +185,8 @@ public class AdminService : IAdminService
                 Description = p.Description,
                 CreatedAt = p.CreatedAt,
                 OwnerId = p.OwnerId,
-                OwnerName = p.Owner != null ? p.Owner.FullName : "Bilinmiyor",
-                OwnerEmail = p.Owner != null ? p.Owner.Email : "",
+                OwnerName = p.Owner != null ? (p.Owner.FullName ?? "İsimsiz") : "Bilinmiyor",
+                OwnerEmail = p.Owner != null ? (p.Owner.Email ?? "") : "",
                 ColumnCount = p.Columns.Count,
                 TaskCount = p.Columns.SelectMany(c => c.Tasks).Count(),
                 MemberCount = p.Members.Count
@@ -194,6 +200,43 @@ public class AdminService : IAdminService
             Page = page,
             PageSize = pageSize
         };
+    }
+
+    // ⚡ EKSİK OLAN PROJE GÖREVLERİ GETİRME METODU
+    public async Task<object> GetProjectTasksAsync(int projectId)
+    {
+        var tasks = await _context.Tasks
+            .AsNoTracking()
+            .Where(t => t.Column != null && t.Column.ProjectId == projectId)
+            .Select(t => new
+            {
+                t.Id,
+                t.Title,
+                t.Description,
+                t.DueDate,
+                ColumnName = t.Column != null ? t.Column.Name : ""
+            })
+            .ToListAsync();
+
+        return tasks;
+    }
+
+    // ⚡ EKSİK OLAN PROJE ÜYELERİ GETİRME METODU
+    public async Task<object> GetProjectMembersAsync(int projectId)
+    {
+        var members = await _context.ProjectMembers
+            .AsNoTracking()
+            .Where(pm => pm.ProjectId == projectId)
+            .Select(pm => new
+            {
+                pm.UserId,
+                FullName = pm.User != null ? pm.User.FullName : "Bilinmeyen Kullanıcı",
+                Email = pm.User != null ? pm.User.Email : "",
+                pm.Role
+            })
+            .ToListAsync();
+
+        return members;
     }
 
     public async Task<bool> DeleteProjectAsync(int projectId, int currentAdminId, string currentAdminName)

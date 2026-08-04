@@ -13,19 +13,22 @@ public interface IAdminService
 Task<List<ProjectDto>> GetAllProjectsAsync(int? limit = null);
         
         Task<PagedResponseDto<ProjectDto>> GetProjectsPageAsync(
-            int page,
-            int pageSize,
-            string? search,
-            int? minColumns,
-            int? minTasks,
-            int? minMembers,
-            bool showArchived);
+        int page,
+        int pageSize,
+        string? projectName,
+        string? ownerSearch,
+        int? minColumns,
+        int? minTasks,
+        int? minMembers,
+        bool showArchived);
 
         Task<bool> DeleteProjectAsync(int projectId, int currentAdminId, string currentAdminName);
 
         Task<bool> ArchiveProjectAsync(int projectId);
 
         Task<bool> UnarchiveProjectAsync(int projectId);
+        Task<object> GetProjectTasksAsync(int projectId);
+        Task<object> GetProjectMembersAsync(int projectId);
 
 }
 
