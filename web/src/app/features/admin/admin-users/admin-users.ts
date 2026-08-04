@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { AdminService } from '../../../core/services/admin.service';
-import { AdminUser } from '../../../core/models/admin.model';
+import { AdminService } from '@services/admin.service';
+import { AdminUser } from '@models/admin.model';
+
 
 @Component({
   selector: 'app-admin-users',
@@ -22,7 +23,8 @@ export class AdminUsersComponent implements OnInit {
   totalPages = 1;
   
   // Filtreleme
-  searchTerm = '';
+  searchEmail = '';
+  searchName = '';
   private searchSubject = new Subject<string>();
   isLoading = false;
 
@@ -37,7 +39,8 @@ private adminService = inject(AdminService);
       debounceTime(300),          // Kullanıcı yazmayı bıraktıktan 300ms sonra tetiklenir
       distinctUntilChanged()      // Aynı değer girildiyse tekrar istek atmaz
     ).subscribe(search => {
-      this.searchTerm = search;
+      this.searchEmail = this.searchEmail?.trim();  // Arama terimini güncelle
+      this.searchName = this.searchName?.trim();  // Arama terimini güncelle
       this.currentPage = 1;      // Yeni aramada 1. sayfaya dön
       this.loadUsers();
     });
@@ -64,9 +67,28 @@ onSearchChange(searchValue: string): void {
     this.searchSubject.next(searchValue);
   }
 
+
+onEmailChange(value: string): void {
+  this.searchEmail = value;
+  this.onSearchChange(this.searchEmail);
+}
+
+onNameChange(value: string): void {
+  this.searchName = value;
+  this.onSearchChange(this.searchName);
+}
+
+
+
   loadUsers(): void {
+
+
+  console.log('Arama Parametreleri:', { 
+    email: this.searchEmail, 
+    name: this.searchName 
+  });
     this.isLoading = true;
-    this.adminService.getUsers(this.searchTerm, this.currentPage, this.pageSize).subscribe({
+    this.adminService.getUsers(this.searchEmail, this.searchName, this.currentPage, this.pageSize).subscribe({
       next: (result) => {
         this.users = result.items;
         this.totalCount = result.totalCount;

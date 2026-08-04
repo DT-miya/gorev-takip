@@ -70,7 +70,7 @@ namespace TaskBoard.Api.Controllers
             await _logService.LogAsync(new CreateActivityLogDto
             {
                 UserId = currentAdminId,
-                UserName = currentAdminName,
+                UserMail = currentAdminName,
                 Action = "ROLE_CHANGE",
                 Description = $"{currentAdminName}, #{id} Id'li kullanıcının rolünü '{request.Role}' olarak değiştirdi.",
                 IpAddress = clientIp
@@ -128,7 +128,7 @@ namespace TaskBoard.Api.Controllers
             await _logService.LogAsync(new CreateActivityLogDto
             {
                 UserId = currentAdminId,
-                UserName = currentAdminName,
+                UserMail = currentAdminName,
                 Action = "PROJECT_DELETE",
                 Description = $"{currentAdminName}, #{id} Id'li projeyi sildi.",
                 IpAddress = clientIp
@@ -156,9 +156,27 @@ namespace TaskBoard.Api.Controllers
         [HttpPut("projects/{id}/archive")]
         public async Task<IActionResult> ArchiveProject(int id)
         {
-            var result = await _adminService.ArchiveProjectAsync(id);
+
+             var currentAdminId = GetUserId();
+            var currentAdminName = User.FindFirst(ClaimTypes.Name)?.Value
+                        ?? User.FindFirst(ClaimTypes.Email)?.Value 
+                        ?? "Admin";
+            var result = await _adminService.ArchiveProjectAsync(id, currentAdminId, currentAdminName);
             if (!result)
                 return NotFound(new { message = "Proje bulunamadı." });
+
+
+                 string clientIp = HttpContext.GetClientIpAddress();
+
+            // DTO Nesnesi ile Log Kaydı
+            await _logService.LogAsync(new CreateActivityLogDto
+            {
+                UserId = currentAdminId,
+                UserMail = currentAdminName,
+                Action = "PROJECT_ARCHIVE",
+                Description = $"{currentAdminName}, #{id} Id'li projeyi arşivledi.",
+                IpAddress = clientIp
+            });
 
             return Ok(new { message = "Proje başarıyla arşivlendi." });
         }
@@ -166,7 +184,12 @@ namespace TaskBoard.Api.Controllers
         [HttpPut("projects/{id}/unarchive")]
         public async Task<IActionResult> UnarchiveProject(int id)
         {
-            var result = await _adminService.UnarchiveProjectAsync(id);
+
+             var currentAdminId = GetUserId();
+            var currentAdminName = User.FindFirst(ClaimTypes.Name)?.Value
+                        ?? User.FindFirst(ClaimTypes.Email)?.Value 
+                        ?? "Admin";
+            var result = await _adminService.UnarchiveProjectAsync(id, currentAdminId, currentAdminName);
             if (!result)
                 return NotFound(new { message = "Proje bulunamadı." });
 
@@ -179,12 +202,22 @@ namespace TaskBoard.Api.Controllers
             var query = _context.ActivityLogs.AsNoTracking().AsQueryable();
 
             // ARAMA FİLTRESİ
-            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            if (!string.IsNullOrWhiteSpace(parameters.SearchUserMail))
             {
-                var searchTerm = parameters.Search.Trim().ToLower();
-                query = query.Where(l => l.UserName.ToLower().Contains(searchTerm) ||
-                                         l.Action.ToLower().Contains(searchTerm) ||
-                                         l.Description.ToLower().Contains(searchTerm));
+                var searchUserMail = parameters.SearchUserMail.Trim().ToLower();
+                query = query.Where(l => l.UserMail.ToLower().Contains(searchUserMail));
+            }
+            
+            if (!string.IsNullOrWhiteSpace(parameters.SearchAction))
+            {
+                var searchAction = parameters.SearchAction.Trim();
+                query = query.Where(l => l.Action.Contains(searchAction));
+            }
+
+            if (!string.IsNullOrWhiteSpace(parameters.SearchDescription))
+            {
+                var searchDescription = parameters.SearchDescription.Trim().ToLower();
+                query = query.Where(l => l.Description.ToLower().Contains(searchDescription));
             }
 
             var totalCount = await query.CountAsync();

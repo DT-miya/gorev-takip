@@ -26,6 +26,15 @@ export class RegisterComponent {
       return;
     }
 
+
+    // 2. Geçerli bir e-posta mı kontrolü (Bunu mutlaka eklemelisiniz)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(this.model.email)) {
+    this.errorMessage = 'Lütfen geçerli bir e-posta adresi girin.';
+    this.cdr.detectChanges();
+    return;
+  }
+
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();

@@ -23,9 +23,9 @@ Task<List<ProjectDto>> GetAllProjectsAsync(int? limit = null);
 
         Task<bool> DeleteProjectAsync(int projectId, int currentAdminId, string currentAdminName);
 
-        Task<bool> ArchiveProjectAsync(int projectId);
+        Task<bool> ArchiveProjectAsync(int projectId, int currentAdminId, string currentAdminName);
 
-        Task<bool> UnarchiveProjectAsync(int projectId);
+        Task<bool> UnarchiveProjectAsync(int projectId, int currentAdminId, string currentAdminName);
 
 }
 

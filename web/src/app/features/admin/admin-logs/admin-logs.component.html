@@ -7,11 +7,27 @@
     <div class="search-box">
       <input 
         type="text" 
-        placeholder="Kullanıcı, işlem veya açıklama ara..." 
-        [ngModel]="searchTerm"
-        (ngModelChange)="onSearchChange($event)"
+        placeholder="Email ile ara..." 
+        [ngModel]="searchEmail"
+        (ngModelChange)="onEmailChange($event)"
         class="form-control" />
-    </div>
+
+        <input 
+        type="text" 
+        placeholder="Açıklama ara..." 
+        [ngModel]="searchDescription"
+        (ngModelChange)="onDescriptionChange($event)"
+        class="form-control" />
+
+        <select
+          [ngModel]="searchAction"
+          (ngModelChange)="onActionChange($event)"
+          class="form-control">
+          <option value="">Tüm Aksiyonlar</option>
+          <option *ngFor="let action of actionTypes" [value]="action">{{ action }}</option>
+        </select>
+
+        </div>
     
     
     <button type="button" class="btn-refresh" (click)="loadLogs()" [disabled]="isLoading">

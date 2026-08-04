@@ -43,7 +43,7 @@ public class ProfileController : ControllerBase
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = updatedProfile.FullName,
+            UserMail = updatedProfile.Email,
             Action = "PROFILE_UPDATE",
             Description = $"{updatedProfile.FullName} profil bilgilerini güncelledi.",
             IpAddress = clientIp
@@ -56,7 +56,7 @@ public class ProfileController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
     {
         int userId = GetCurrentUserId();
-        var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? User.FindFirst(ClaimTypes.Email)?.Value ?? "Kullanıcı";
+        var userMail = User.FindFirst(ClaimTypes.Email)?.Value ?? "Kullanıcı";
 
         await _profileService.ChangePasswordAsync(userId, dto);
 
@@ -66,9 +66,9 @@ public class ProfileController : ControllerBase
         await _logService.LogAsync(new CreateActivityLogDto
         {
             UserId = userId,
-            UserName = userName,
+            UserMail = userMail,
             Action = "PASSWORD_CHANGE",
-            Description = $"{userName} hesabının şifresini değiştirdi.",
+            Description = $"{userMail} hesabının şifresini değiştirdi.",
             IpAddress = clientIp
         });
 
