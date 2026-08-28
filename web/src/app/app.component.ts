@@ -26,7 +26,7 @@ import { AuthService } from '@services/auth.service';
           <!-- Eğer Kullanıcı Admin ise Admin Paneline Geçiş Butonu -->
           @if (authService.getUserRole() === 'Admin') {
             <a mat-button routerLink="/admin" class="nav-admin-link">
-              <i class="fas fa-crown"></i> Admin Paneline Geç
+              <i class="fas fa-user-plus"></i> Admin Paneline Geç
             </a>
           }
         }

@@ -25,8 +25,14 @@ export class AdminUsersComponent implements OnInit {
   // Filtreleme
   searchEmail = '';
   searchName = '';
+
+  showEmailFilter = signal(false);
+  showNameFilter = signal(false);
+
   private searchSubject = new Subject<string>();
   isLoading = false;
+
+  private searchTimer: any;
 
 private adminService = inject(AdminService);
   private cdr = inject(ChangeDetectorRef);
@@ -44,6 +50,18 @@ private adminService = inject(AdminService);
       this.currentPage = 1;      // Yeni aramada 1. sayfaya dön
       this.loadUsers();
     });
+  }
+
+  toggleNameFilter(event: Event): void {
+    event.stopPropagation();
+    this.showEmailFilter.set(false);
+    this.showNameFilter.set(!this.showNameFilter());
+  }
+
+  toggleEmailFilter(event: Event): void {
+    event.stopPropagation();
+    this.showNameFilter.set(false);
+    this.showEmailFilter.set(!this.showEmailFilter());
   }
 
   toggleRole(user: AdminUser): void {
@@ -65,28 +83,45 @@ private adminService = inject(AdminService);
 
 onSearchChange(searchValue: string): void {
     this.searchSubject.next(searchValue);
+    this.triggerDebouncedSearch();
+    
   }
 
 
 onEmailChange(value: string): void {
   this.searchEmail = value;
   this.onSearchChange(this.searchEmail);
+  this.triggerDebouncedSearch();
 }
 
 onNameChange(value: string): void {
   this.searchName = value;
   this.onSearchChange(this.searchName);
+  this.triggerDebouncedSearch();
 }
+
+
+
+ private triggerDebouncedSearch(): void {
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    this.searchTimer = setTimeout(() => {
+      this.currentPage = 1;
+      this.loadUsers();
+    }, 400);
+  }
+
+  onFilterChange(): void {
+    this.triggerDebouncedSearch();
+  }
 
 
 
   loadUsers(): void {
 
 
-  console.log('Arama Parametreleri:', { 
-    email: this.searchEmail, 
-    name: this.searchName 
-  });
+  
     this.isLoading = true;
     this.adminService.getUsers(this.searchEmail, this.searchName, this.currentPage, this.pageSize).subscribe({
       next: (result) => {

@@ -14,6 +14,7 @@
     <button type="button" [class.active]="showArchived()" (click)="!showArchived() && toggleArchivedView()">
       Arşivlenmiş
     </button>
+
   </div>
 
   @if (error()) {
@@ -66,6 +67,7 @@
           <th>Görev</th>
           <th>Üye</th>
           <th>Oluşturulma</th>
+          <th>Durum</th>
           <th>İşlem</th>
         </tr>
       </thead>
@@ -89,6 +91,16 @@
               <td><span class="count-badge task">{{ project.taskCount }}</span></td>
               <td><span class="count-badge member">{{ project.memberCount }}</span></td>
               <td>{{ project.createdAt | date:'dd MMM yyyy HH:mm' }}</td>
+              <td>
+                <span 
+                  class="status-badge" 
+                  [ngClass]="{
+                    'status-active': project.status === 1,
+                    'status-completed': project.status === 2
+                  }">
+                  {{ project.status === 1 ? 'Devam Ediyor' : 'Tamamlandı' }}
+                </span>
+              </td>
               <td>
                 <div class="action-buttons">
                   <button type="button" class="action-button primary" (click)="openProjectTasks(project.id)">
@@ -140,13 +152,48 @@
               <!-- Durum 1: Backend nesne/kolon dizisi gönderiyorsa (column.title & column.tasks) -->
               @if (taskData()[0]?.title || taskData()[0]?.tasks) {
                 @for (column of taskData(); track column.id || column.title) {
+<div class="columns-wrapper">
+  <div class="column-card">
+                  <div class="column-header">
+       
+          <h3>{{ column.title }} <span class="task-count">({{ column.tasks.length }})</span></h3>
+        
+                  </div>
                   <div class="task-column">
-                    <strong>{{ column.title }}</strong>
-                    <ul>
+                   
+                    
                       @for (task of column.tasks; track task.id) {
-                        <li>{{ task.title }}</li>
+                        <!-- GÖREV KARTI -->
+        <div 
+          class="task-card" 
+          >
+          
+          <div class="task-title">{{ task.title }}</div>
+          
+          <div class="task-footer">
+            <span class="badge" [ngClass]="'priority-' + task.priority.toLowerCase()">
+              {{ (task.priority) }}
+            </span>
+
+            <div class="right-info">
+              <span 
+                *ngIf="task.dueDate" 
+                class="due-date" 
+               >
+               
+                📅 {{ task.dueDate | date:'dd MMM' }}
+              </span>
+
+              <div *ngIf="task.assigneeName" class="avatar">
+                {{ getInitials(task.assigneeName) }}
+              </div>
+            </div>
+          </div>
+
+        </div>
                       }
-                    </ul>
+                    </div>
+                    </div>
                   </div>
                 }
               }

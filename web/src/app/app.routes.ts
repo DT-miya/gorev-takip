@@ -11,7 +11,7 @@ import { AdminStatsComponent } from './features/admin/admin-stats/admin-stats';
 import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
 
 import { adminGuard } from '@core/guards/admin.guard';
-import { AdminProjects } from '@features/admin-projects/admin-projects';
+import { AdminProjects } from '@features/admin/admin-projects/admin-projects';
 import { guestGuard } from '@core/guards/guest.guard';
 
 export const routes: Routes = [

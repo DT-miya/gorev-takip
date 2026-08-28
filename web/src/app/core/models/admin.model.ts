@@ -22,6 +22,7 @@ export interface AdminProject {
     columnCount: number;
     taskCount: number;
     memberCount: number;
+    status: number; // 1: Devam Ediyor, 2: Tamamlandı
 }
 
 // Backend DTO'su ile %100 uyumlu Jenerik Sayfalama Tipi
@@ -39,7 +40,7 @@ export type PagedResponse<T> = PagedResult<T>;
 export interface ActivityLog {
     id: number;
     userId: number;
-    userName: string;
+    userMail: string;
     action: string;
     description: string;
     projectId?: number;

@@ -23,10 +23,9 @@ export class ProjectListComponent implements OnInit {
   constructor(private projectService: ProjectService, private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
-    console.log("ngOnit çalışıyor")
+   
     this.projectService.getMyProjects().subscribe({
       next: (data) => {
-        console.log("veri geldi", data)
         this.projects.set(data)
         this.loading.set(false);
       },
