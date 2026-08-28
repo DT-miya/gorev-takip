@@ -156,6 +156,16 @@
   font-size: 0.8rem;
 }
 
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-active { background: #d1dffa; color: #5210cc; }
+.status-completed { background: #e0f2fe; color: #0c9921; }
+
 .btn-danger-sm:hover { background: #fca5a5; }
 .text-right { text-align: right; }
 .empty-cell { text-align: center; color: #9ca3af; padding: 24px; }

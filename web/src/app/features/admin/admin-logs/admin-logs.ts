@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -26,6 +26,12 @@ export class AdminLogsComponent implements OnInit {
   searchAction = '';
   searchDescription = '';
 
+  showEmailFilter = signal(false);
+  showActionFilter = signal(false);
+  showDescriptionFilter = signal(false);
+
+
+  private searchTimer: any;
 
   private searchSubject = new Subject<string>();
 
@@ -48,19 +54,53 @@ export class AdminLogsComponent implements OnInit {
     });
   }
 
-  onSearchChange(searchValue: string): void {
-    this.searchSubject.next(searchValue);
+toggleActionFilter(event: Event): void {
+    event.stopPropagation();
+    this.showActionFilter.set(!this.showActionFilter());
+    this.showEmailFilter.set(false);
+    this.showDescriptionFilter.set(false);
   }
 
+  toggleDescriptionFilter(event: Event): void {
+    event.stopPropagation();
+    this.showDescriptionFilter.set(!this.showDescriptionFilter());
+    this.showEmailFilter.set(false);
+    this.showActionFilter.set(false);
+  }
+
+  toggleEmailFilter(event: Event): void {
+    event.stopPropagation();
+    this.showActionFilter.set(false);
+    this.showDescriptionFilter.set(false);
+    this.showEmailFilter.set(!this.showEmailFilter());
+  }
+
+  onSearchChange(searchValue: string): void {
+    this.searchSubject.next(searchValue);
+    this.triggerDebouncedSearch();
+  }
+
+
+  private triggerDebouncedSearch(): void {
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    this.searchTimer = setTimeout(() => {
+      this.currentPage = 1;
+      this.loadLogs();
+    }, 400);
+  }
 
   onEmailChange(value: string): void {
   this.searchEmail = value;
   this.onSearchChange(this.searchEmail);
+  this.triggerDebouncedSearch();
 }
 
 onActionChange(value: string): void {
   this.searchAction = value;
   this.onSearchChange(this.searchAction);
+  this.triggerDebouncedSearch();
 }
 
 onDescriptionChange(value: string): void {

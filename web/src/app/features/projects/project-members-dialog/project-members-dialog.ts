@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,6 +35,8 @@ export class ProjectMembersDialog implements OnInit {
 
   constructor(
     private projectService: ProjectService,
+    private router: Router, // 🚀 Yönlendirme servisi eklendi
+    private dialogRef: MatDialogRef<ProjectMembersDialog>, // 🚀 Dialog kapatma servisi eklendi
     @Inject(MAT_DIALOG_DATA) public data: { projectId: number }
   ) {}
 
@@ -67,8 +70,27 @@ export class ProjectMembersDialog implements OnInit {
   }
 
   removeMember(memberUserId: number): void {
+    const confirmMessage = "Bu işlem geri alınamaz. Emin misiniz?";
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
     this.projectService.removeMember(this.data.projectId, memberUserId).subscribe({
-      next: (members) => this.members.set(members),
+      next: (res: { message: string; isSelfRemoval: boolean; members: Member[] | null }) => {
+        if (res.isSelfRemoval) {
+          // 🚀 1. Kendi isteğiyle ayrıldıysa: Mesaj göster, modalı kapat ve projelere yönlendir
+          alert(res.message);
+          this.dialogRef.close(true);
+          window.location.href = '/projects';
+          this.router.navigate(['/projects']);
+        } else {
+          // 🚀 2. Başka bir üyeyi çıkardıysa: Üye listesini güncelle
+          if (res.members) {
+            this.members.set(res.members);
+          }
+        }
+      },
       error: (err) => {
         this.error.set(err.error?.message || 'Üye çıkarılamadı');
       }

@@ -1,33 +1,7 @@
 <div class="logs-container">
   
   <div class="header-actions">
-    <h2><i class="fas fa-history"></i> Sistem İşlem Logları </h2>
     
-    <!-- 🔍 ARAMA KUTUSU -->
-    <div class="search-box">
-      <input 
-        type="text" 
-        placeholder="Email ile ara..." 
-        [ngModel]="searchEmail"
-        (ngModelChange)="onEmailChange($event)"
-        class="form-control" />
-
-        <input 
-        type="text" 
-        placeholder="Açıklama ara..." 
-        [ngModel]="searchDescription"
-        (ngModelChange)="onDescriptionChange($event)"
-        class="form-control" />
-
-        <select
-          [ngModel]="searchAction"
-          (ngModelChange)="onActionChange($event)"
-          class="form-control">
-          <option value="">Tüm Aksiyonlar</option>
-          <option *ngFor="let action of actionTypes" [value]="action">{{ action }}</option>
-        </select>
-
-        </div>
     
     
     <button type="button" class="btn-refresh" (click)="loadLogs()" [disabled]="isLoading">
@@ -40,32 +14,77 @@
     <p><i class="fa-solid fa-spinner fa-spin"></i> Loglar yükleniyor...</p>
   </div>
 
-  <!-- ZAMAN TÜNELİ (TIMELINE) -->
-  <div class="timeline" *ngIf="!isLoading">
-    @for (log of logs; track log.id) {
-      <div class="log-card">
-        <div class="log-time">
-          <i class="fas fa-clock"></i> {{ log.createdAt | date:'dd.MM.yyyy HH:mm:ss' }}
-        </div>
+
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th class="filter-th">
+           <div class="th-inner">
+              <span>E-posta</span>
+              <button type="button" class="th-filter-btn" (click)="toggleEmailFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showEmailFilter()" (click)="$event.stopPropagation()">
+              <input 
+  type="text"
+  placeholder="E-posta ile ara..."
+  [ngModel]="searchEmail"
+  (ngModelChange)="onEmailChange($event)"
+  class="form-control" />
+            </div>
+        </th>
+      <th class="filter-th">
+           <div class="th-inner">
+              <span>Aksiyon</span>
+              <button type="button" class="th-filter-btn" (click)="toggleActionFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showActionFilter()" (click)="$event.stopPropagation()">
+             <select
+          [ngModel]="searchAction"
+          (ngModelChange)="onActionChange($event)"
+          class="form-control">
+          <option value="">Tüm Aksiyonlar</option>
+          <option *ngFor="let action of actionTypes" [value]="action">{{ action }}</option>
+        </select>
+            </div>
+        </th>
+        <th class="filter-th">
+           <div class="th-inner">
+              <span>Açıklama</span>
+              <button type="button" class="th-filter-btn" (click)="toggleDescriptionFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showDescriptionFilter()" (click)="$event.stopPropagation()">
+               <input 
+        type="text" 
+        placeholder="Açıklama ara..." 
+        [ngModel]="searchDescription"
+        (ngModelChange)="onDescriptionChange($event)"
+        class="form-control" />
+            </div>
+        </th>
+        <th>Tarih</th>
+        <th>IP Adresi</th>
+       
         
-        <div class="log-badge" [ngClass]="getActionClass(log.action)">
-          {{ log.action }}
-        </div>
-
-        <div class="log-description">
-          {{ log.description }}
-        </div>
-         <div class="log-ip">
-          {{ log.ipAddress }}
-        </div>
-
-      </div>
-    } @empty {
-      <div class="empty-state">
-        <p>Henüz sistemde kaydedilmiş bir işlem logu bulunmuyor.</p>
-      </div>
-    }
-  </div>
+      </tr>
+    </thead>
+    <tbody>
+      @for (log of logs; track log.id) {
+        <tr>
+          <td>{{ log.userMail }}</td>
+          <td class="log-badge {{ getActionClass(log.action) | lowercase }}">{{ log.action }}</td>
+          <td>{{ log.description }}</td>
+          <td>{{ log.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
+          <td>{{ log.ipAddress }}</td>
+          
+         
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4" class="no-logs">Kayıt bulunamadı.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 
   <!-- SAYFALANDIRMA (PAGINATION) -->
   <div class="pagination-bar" *ngIf="totalPages > 0 && !isLoading">

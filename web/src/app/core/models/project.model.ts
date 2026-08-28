@@ -17,3 +17,9 @@ export interface Member {
   email: string;
   role: string;
 }
+
+export interface RemoveMemberResponse {
+  message: string;
+  isSelfRemoval: boolean;
+  members: Member[] | null;
+}

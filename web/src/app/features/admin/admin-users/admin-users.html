@@ -1,28 +1,39 @@
 <div class="admin-users-page">
 
-<div class="search-box">
-<input 
-  type="text" 
-  placeholder="E-posta ile ara..." 
-  [ngModel]="searchEmail"
-  (ngModelChange)="onEmailChange($event)"
-  class="form-control" />
 
-<!-- Ad Soyad Input -->
-<input 
-  type="text"
-  placeholder="Ad Soyad ile ara..."
-  [ngModel]="searchName"
-  (ngModelChange)="onNameChange($event)"
-  class="form-control" />
-    </div>
 
   <table class="users-table">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Ad Soyad</th>
-        <th>E-posta</th>
+        <th class="filter-th">
+           <div class="th-inner">
+              <span>Ad Soyad</span>
+              <button type="button" class="th-filter-btn" (click)="toggleNameFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showNameFilter()" (click)="$event.stopPropagation()">
+              <input 
+  type="text"
+  placeholder="Ad Soyad ile ara..."
+  [ngModel]="searchName"
+  (ngModelChange)="onNameChange($event)"
+  class="form-control" />
+            </div>
+        </th>
+       <th class="filter-th">
+           <div class="th-inner">
+              <span>E-posta</span>
+              <button type="button" class="th-filter-btn" (click)="toggleEmailFilter($event)">🔍</button>
+            </div>
+            <div class="th-filter-popup" [hidden]="!showEmailFilter()" (click)="$event.stopPropagation()">
+              <input 
+  type="text"
+  placeholder="E-posta ile ara..."
+  [ngModel]="searchEmail"
+  (ngModelChange)="onEmailChange($event)"
+  class="form-control" />
+            </div>
+        </th>
         <th>Rol</th>
         <th>İşlem</th>
       </tr>
